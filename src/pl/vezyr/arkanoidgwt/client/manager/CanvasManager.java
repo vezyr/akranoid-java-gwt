@@ -2,12 +2,16 @@ package pl.vezyr.arkanoidgwt.client.manager;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.RootPanel;
+
 import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.GameplayCanvasWrapper;
 
 public class CanvasManager {
 
+	public static final String CANVAS_CONTAINER_ID = "canvas";
+	
 	private CanvasWrapper gameplayCanvas;
 	private CanvasWrapper currentLoadedCanvas;
 	
@@ -21,9 +25,16 @@ public class CanvasManager {
 				
 			break;
 			case GAMEPLAY:
+				unloadAllFromCanvasContainer();
 				gameplayCanvas.load();
 				currentLoadedCanvas = gameplayCanvas;
 			break;
+		}
+	}
+	
+	public void unloadAllFromCanvasContainer() {
+		for (int i = (RootPanel.get(CANVAS_CONTAINER_ID).getWidgetCount() - 1); i >= 0; i--) {
+			RootPanel.get(CANVAS_CONTAINER_ID).remove(i);
 		}
 	}
 	
@@ -31,7 +42,7 @@ public class CanvasManager {
 		return currentLoadedCanvas;
 	}
 	
-	public void RedrawCurrentLoadedCanvas(List<GameObject> dynamicObjects) {
+	public void redrawCurrentLoadedCanvas(List<GameObject> dynamicObjects) {
 		currentLoadedCanvas.redraw(dynamicObjects);
 	}
 }

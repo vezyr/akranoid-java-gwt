@@ -6,7 +6,7 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
 public class Paddle extends GameObject {
 
-	public Paddle(Vector2 position, Image image) {
+	public Paddle(Vector2<Integer> position, Image image) {
 		super(position, image);
 	}
 

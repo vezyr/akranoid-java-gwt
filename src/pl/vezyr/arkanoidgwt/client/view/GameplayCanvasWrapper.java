@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
 import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.manager.CanvasManager;
 
 public class GameplayCanvasWrapper implements CanvasWrapper {
 
@@ -28,13 +29,7 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 
 	@Override
 	public void load() {
-		try {
-			RootPanel.get("canvas").remove(0);
-		} catch (IndexOutOfBoundsException ex) {
-			// do nothing - it's the first canvas (there is no previous one
-			// so we do not need to remove previous).
-		}
-		RootPanel.get("canvas").add(canvas);
+		RootPanel.get(CanvasManager.CANVAS_CONTAINER_ID).add(canvas);
 	}
 
 	@Override
