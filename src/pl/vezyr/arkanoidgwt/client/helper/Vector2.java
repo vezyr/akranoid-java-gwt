@@ -1,6 +1,6 @@
 package pl.vezyr.arkanoidgwt.client.helper;
 
-public class Vector2<T> {
+public class Vector2<T extends Number> {
 
 	private T x;
 	private T y;
