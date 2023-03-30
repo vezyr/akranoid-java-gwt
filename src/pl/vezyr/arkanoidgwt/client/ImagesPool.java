@@ -10,6 +10,9 @@ public class ImagesPool {
 
 	public static final String IMAGE_BALL = "ball";
 	public static final String IMAGE_PADDLE = "paddle";
+	public static final String IMAGE_BLOCK_WEAK = "block_weak";
+	public static final String IMAGE_BLOCK_MEDIUM = "block_medium";
+	public static final String IMAGE_BLOCK_STRONG = "block_strong";
 	
 	private static final String IMAGES_CONTAINER_NAME = "images_container";
 	
@@ -23,6 +26,9 @@ public class ImagesPool {
 		
 		images.put(IMAGE_BALL, new Image("images/ballBlue.png"));
 		images.put(IMAGE_PADDLE, new Image("images/paddleBlu.png"));
+		images.put(IMAGE_BLOCK_WEAK, new Image("images/blockYellow.png"));
+		images.put(IMAGE_BLOCK_MEDIUM, new Image("images/blockBlue.png"));
+		images.put(IMAGE_BLOCK_STRONG, new Image("images/blockRed.png"));
 		
 		images.forEach((String key, Image value) -> {
 			value.setVisible(false);

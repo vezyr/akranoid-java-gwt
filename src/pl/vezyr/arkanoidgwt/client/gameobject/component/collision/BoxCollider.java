@@ -1,6 +1,6 @@
-package pl.vezyr.arkanoidgwt.client.gameobjects.collisions;
+package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 
-import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 
 public class BoxCollider extends BaseCollider {
 

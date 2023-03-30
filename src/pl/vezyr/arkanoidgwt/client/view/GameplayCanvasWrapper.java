@@ -8,7 +8,7 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
-import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.manager.CanvasManager;
 
 public class GameplayCanvasWrapper implements CanvasWrapper {

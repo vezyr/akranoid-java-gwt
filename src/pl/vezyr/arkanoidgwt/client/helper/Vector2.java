@@ -34,4 +34,11 @@ public class Vector2<T extends Number> {
 		this.x = x;
 		this.y = y;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("Vector2(").append(x).append(", ").append(y).append(")");
+		return result.toString();
+	}
 }

@@ -1,4 +1,4 @@
-package pl.vezyr.arkanoidgwt.client.gameobjects;
+package pl.vezyr.arkanoidgwt.client.gameobject;
 
 import com.google.gwt.user.client.ui.Image;
 

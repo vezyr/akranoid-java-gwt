@@ -1,9 +1,10 @@
-package pl.vezyr.arkanoidgwt.client.gameobjects.collisions;
+package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 
-import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.component.BaseComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
-public class BaseCollider implements Collider {
+public class BaseCollider extends BaseComponent implements Collider {
 
 	private final Vector2<Integer> leftUpCorner;
 	private final Vector2<Integer> size;
@@ -11,6 +12,7 @@ public class BaseCollider implements Collider {
 	private Vector2<Float> center;
 	
 	public BaseCollider(GameObject gameObject) {
+		super(gameObject);
 		leftUpCorner = gameObject.getPosition();
 		size = new Vector2<Integer>(gameObject.getImage().getWidth(), gameObject.getImage().getHeight());
 		halfOfSize = new Vector2<Float>((float)size.getX() / 2, (float)size.getY()/2);

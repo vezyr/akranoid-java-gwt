@@ -1,4 +1,4 @@
-package pl.vezyr.arkanoidgwt.client.gameobjects.collisions;
+package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 
 public interface CollisionChecker {
 

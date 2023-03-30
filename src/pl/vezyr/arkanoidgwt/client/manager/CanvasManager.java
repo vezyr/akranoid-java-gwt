@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.RootPanel;
 
-import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.GameplayCanvasWrapper;
 

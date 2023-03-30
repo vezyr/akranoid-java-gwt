@@ -1,4 +1,4 @@
-package pl.vezyr.arkanoidgwt.client.gameobjects.collisions;
+package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
