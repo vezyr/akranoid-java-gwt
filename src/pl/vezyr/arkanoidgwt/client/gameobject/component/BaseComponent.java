@@ -6,7 +6,7 @@ import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
  * Base of all GameObject's components.
  * Provides linking between Component and GameObject. 
  * @author vezyr
- *
+ * @see pl.vezyr.arkanoidgwt.client.gameobject.GameObject
  */
 public abstract class BaseComponent {
 

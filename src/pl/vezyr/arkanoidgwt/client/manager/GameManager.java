@@ -1,5 +1,12 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
+/**
+ * Main manger of the game.
+ * Handles different states of the game,
+ * ie. main menu is loaded, gameplay is active etc.
+ * @author vezyr
+ *
+ */
 public class GameManager {
 
 	private GameState state = null;
@@ -12,6 +19,12 @@ public class GameManager {
 		gameplayManager = new GameplayManager(canvasManager);
 	}
 	
+	/**
+	 * Changes the state of the game to the new state.
+	 * If the new state is the same as old, no action is performed,
+	 * so it's safe to invoke this method multiple times.
+	 * @param newState
+	 */
 	public void changeState(GameState newState) {
 		if(newState == state) {
 			return;
@@ -33,11 +46,17 @@ public class GameManager {
 		}
 	}
 	
+	/**
+	 * Action to perform when loading Gameplay state.
+	 */
 	private void onStateChangeToGameplay() {
 		canvasManager.loadCanvasFor(GameState.GAMEPLAY);
 		gameplayManager.run();
 	}
 	
+	/**
+	 * Action to perform when loading MainMenu state.
+	 */
 	private void onStateChangeToMainMenu() {
 		
 	}

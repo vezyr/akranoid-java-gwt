@@ -8,6 +8,16 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
+/**
+ * Base class of all blocks.
+ * Inherits from base GameObject.
+ * Implements Destroyable and adds HealthCompoment to handle the health points of the block.
+ * Implements Collidable so the collisions between ball and block could be detected and handled.
+ * @author vezyr
+ * @see pl.vezyr.arkanoidgwt.client.gameobject.GameObject
+ * @see pl.vezyr.arkanoidgwt.client.gameobject.Destroyable
+ * @see pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable
+ */
 public class BaseBlock extends GameObject implements Destroyable, Collidable {
 
 	private BoxCollider collider;
@@ -15,8 +25,8 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 	
 	public BaseBlock(Vector2<Integer> position, Image image, int initialHealth) {
 		super(position, image);
-		collider = new BoxCollider(this);
 		health = new HealthComponent(this, initialHealth);
+		collider = new BoxCollider(this);
 	}
 
 	@Override
@@ -27,6 +37,7 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 	@Override
 	public void takeDamage(int attackStrength) {
 		health.takeDamage(attackStrength);		
+		
 	}
 
 	@Override

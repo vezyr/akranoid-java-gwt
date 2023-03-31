@@ -6,12 +6,17 @@ import com.google.gwt.event.shared.EventHandler;
 
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
-public class MouseGameplayInputManager implements InputManager {
+/**
+ * Mouse input handler when on gameplay state.
+ * @author vezyr
+ *
+ */
+public class MouseGameplayInputHandler implements InputHandler {
 
 	private EventHandler handler;
 	private Vector2<Integer> mousePosition;
 	
-	public MouseGameplayInputManager() {
+	public MouseGameplayInputHandler() {
 		mousePosition = new Vector2<Integer>(0, 0);
 		handler = new MouseMoveHandler() {
 			
@@ -27,6 +32,10 @@ public class MouseGameplayInputManager implements InputManager {
 		return handler;
 	}
 
+	/**
+	 * Return the mouse position on scene (on Canvas).
+	 * @return Vector2<Integer> Coordinates of the mouse cursor.
+	 */
 	public Vector2<Integer> getMousePosition() {
 		return mousePosition;
 	}

@@ -25,8 +25,17 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
-import pl.vezyr.arkanoidgwt.client.manager.input.MouseGameplayInputManager;
+import pl.vezyr.arkanoidgwt.client.manager.input.MouseGameplayInputHandler;
 
+/**
+ * Main gameplay manager.
+ * Handles all operations of the gameplay,
+ * ie. invokes InputManager's methods to handle input,
+ * retrives object and invokes collision check on them,
+ * invokes redraw on canvas etc.
+ * @author vezyr
+ * @see pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker
+ */
 public class GameplayManager implements CollisionChecker {
 
 	private CanvasManager canvasManager;
@@ -37,6 +46,12 @@ public class GameplayManager implements CollisionChecker {
 	
 	private final static Logger logger = Logger.getLogger(GameplayManager.class.getName());
 	
+	/**
+	 * Contructor of the GameplayManager with reference to the CanvasManager as parameter.
+	 * Constructs all the dynamic objects. These objects will be later controlled by this 
+	 * manager and passed to the CanvasManager to draw.
+	 * @param canvasManager Reference to the CanvasManager.
+	 */
 	public GameplayManager(CanvasManager canvasManager) {
 		this.canvasManager = canvasManager;
 		
@@ -61,8 +76,12 @@ public class GameplayManager implements CollisionChecker {
 		}
 	}
 	
+	/**
+	 * Entry point of the gameplay.
+	 * Initialize any additional objects and run main game loop.
+	 */
 	public void run() {
-		MouseGameplayInputManager mouseInput = new MouseGameplayInputManager();
+		MouseGameplayInputHandler mouseInput = new MouseGameplayInputHandler();
 		canvasManager.getCurrentLoadedCanvas().getCanvas().addMouseMoveHandler((MouseMoveHandler) mouseInput.getHandler());
 		
 		ball.getDirection().set((float)Math.sin(Math.toRadians(-45)), (float)Math.sin(Math.toRadians(45)));		
@@ -73,38 +92,46 @@ public class GameplayManager implements CollisionChecker {
 			public void execute(double timestamp) {
 				Canvas canvas = canvasManager.getCurrentLoadedCanvas().getCanvas();
 				
+				ball.getPosition().setX((int)(ball.getPosition().getX() + ball.getDirection().getX() * 6));
+				ball.getPosition().setY((int)(ball.getPosition().getY() + ball.getDirection().getY() * 6));
+				
+				if (mouseInput.getMousePosition().getX() > 0 && mouseInput.getMousePosition().getX() < canvas.getCoordinateSpaceWidth() - paddle.getImage().getWidth()) {
+					paddle.getPosition().setX(mouseInput.getMousePosition().getX());
+				}
+				
 				if(ball.getPosition().getX() >= canvas.getCoordinateSpaceWidth() - ball.getImage().getWidth()) {
+					ball.getPosition().setX(canvas.getCoordinateSpaceWidth() - ball.getImage().getWidth() - 1);
 					ball.getDirection().setX(ball.getDirection().getX() * -1);
 				} else if(ball.getPosition().getX() <= 0) {
+					ball.getPosition().setX(1);
 					ball.getDirection().setX(ball.getDirection().getX() * -1);
 				} 
 				
-				if(ball.getPosition().getY() >= canvas.getCoordinateSpaceHeight() - ball.getImage().getHeight()) {
-					ball.getDirection().setY(ball.getDirection().getY() * -1);
-				} else if(ball.getPosition().getY() <= 0) {
+				if(ball.getPosition().getY() <= 0) {
+					ball.getPosition().setY(1);
 					ball.getDirection().setY(ball.getDirection().getY() * -1);
 				}
 				
 				List<GameObject> objectsToRemove = new ArrayList<GameObject>();
+				CollisionResult paddleCollision = checkCollision(ball, (Collidable)paddle);
+				ball.handleCollision(paddleCollision);
+				
 				dynamicObjects.forEach(dynamicObj -> {
-					if (dynamicObj != ball && (dynamicObj instanceof Paddle || dynamicObj instanceof BaseBlock) && dynamicObj instanceof Collidable) {
+					if (dynamicObj != ball && dynamicObj instanceof BaseBlock && dynamicObj instanceof Collidable) {
 						CollisionResult collision = checkCollision(ball, (Collidable)dynamicObj);
 						ball.handleCollision(collision);
 						
 						if (dynamicObj instanceof Destroyable && !((Destroyable)dynamicObj).isAlive()) {
 							objectsToRemove.add(dynamicObj);
 						}
+						
+						if (collision.isCollided()) {
+							return;
+						}
 					}
 				});
 				
 				dynamicObjects.removeAll(objectsToRemove);
-				
-				ball.getPosition().setX((int)(ball.getPosition().getX() + ball.getDirection().getX() * 10));
-				ball.getPosition().setY((int)(ball.getPosition().getY() + ball.getDirection().getY() * 10));
-				
-				if (mouseInput.getMousePosition().getX() > 0 && mouseInput.getMousePosition().getX() < canvas.getCoordinateSpaceWidth() - paddle.getImage().getWidth()) {
-					paddle.getPosition().setX(mouseInput.getMousePosition().getX());
-				}
 				
 				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects);
 				
@@ -142,6 +169,9 @@ public class GameplayManager implements CollisionChecker {
 		);
 		
 		boolean collision = distanceBetweenRectAndBall < ((CircleCollider)ball.getCollider()).getRadius();
+		if (collision) {
+			logger.info("Ball hits " + rect + ". Distance: " + distanceBetweenRectAndBall);
+		}
 		
 		return new CollisionResult(collision, collision ? pointOnRectClosestToBall : null, collision ? rect : null);
 	}
