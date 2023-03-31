@@ -8,9 +8,15 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
-import pl.vezyr.arkanoidgwt.client.gameobjects.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.manager.CanvasManager;
 
+/**
+ * Gameplay canvas wrapper.
+ * Construct and hold the canvas for the gameplay scene.
+ * @author vezyr
+ *
+ */
 public class GameplayCanvasWrapper implements CanvasWrapper {
 
 	private Canvas canvas;
@@ -36,7 +42,8 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 	public void redraw(List<GameObject> dynamicObjects) {
 		context.clearRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
 		dynamicObjects.forEach(dynamicObject -> {
-			context.drawImage(ImageElement.as(dynamicObject.getImage().getElement()), dynamicObject.getPosition().getX(), dynamicObject.getPosition().getY());
+			ImageElement imageElement = ImageElement.as(dynamicObject.getImage().getElement());
+			context.drawImage(imageElement, dynamicObject.getPosition().getX(), dynamicObject.getPosition().getY());
 		});
 	}
 
@@ -44,6 +51,4 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 	public Canvas getCanvas() {
 		return canvas;
 	}
-	
-	
 }
