@@ -11,6 +11,8 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.event.dom.client.KeyCodes;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
+import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
+import pl.vezyr.arkanoidgwt.client.data.PlayerData;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -48,6 +50,7 @@ public class GameplayManager implements CollisionChecker {
 	
 	private double lastFrameTimestamp = 0;
 	private GameplayState state;
+	private PlayerData playerData;
 	
 	/**
 	 * Contructor of the GameplayManager with reference to the CanvasManager as parameter.
@@ -87,8 +90,10 @@ public class GameplayManager implements CollisionChecker {
 		this.inputManager = new GameplayInputManager(this.canvasManager.getCurrentLoadedCanvas());
 		inputManager.registerHandlers();
 		
-		//
 		lastFrameTimestamp = (new Date()).getTime();
+		playerData = new PlayerData();		
+		GameplayUiData uiData = new GameplayUiData();
+		
 		state = GameplayState.READY_TO_START;
 		
 		AnimationCallback gameplayAnimationCallback = new AnimationCallback() {
@@ -100,7 +105,9 @@ public class GameplayManager implements CollisionChecker {
 				
 				inputManager.processInput();
 				update(deltaTime);
-				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects);
+				uiData.updateData(playerData.getNumberOfLives());
+				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
+				
 				
 				lastFrameTimestamp = timestamp;
 				AnimationScheduler.get().requestAnimationFrame(this);
@@ -118,15 +125,24 @@ public class GameplayManager implements CollisionChecker {
 		switch(state) {
 			case READY_TO_START:
 				if (newState == GameplayState.IN_PROGRESS) {
-					onStateChangeToInProgress();
 					state = newState;
+					onStateChangeToInProgress();
 				}
 			break;
 			case IN_PROGRESS:
-
+				if (newState == GameplayState.LOST_LIVE) {
+					state = newState;
+					onStateChangeToLostLive();
+				}
 			break;
 			case LOST_LIVE:
-				
+				switch (newState) {
+					case READY_TO_START:
+						state = newState;
+					break;
+					case GAME_LOST:
+					break;
+				}
 			break;
 			case GAME_WIN:
 				
@@ -144,6 +160,14 @@ public class GameplayManager implements CollisionChecker {
 			xAngle = (float)Math.sin(Math.toRadians(45));
 		}
 		ball.getDirection().set(xAngle, (float)Math.sin(Math.toRadians(-45)));
+	}
+	
+	private void onStateChangeToLostLive() {
+		if(playerData.liveLost()) {
+			changeState(GameplayState.READY_TO_START);
+		} else {
+			changeState(GameplayState.GAME_LOST);
+		}
 	}
 	
 	private void update(double deltaTime) {
@@ -185,6 +209,10 @@ public class GameplayManager implements CollisionChecker {
 			if(ball.getPosition().getY() <= 0) {
 				ball.getPosition().setY(1);
 				ball.getDirection().setY(ball.getDirection().getY() * -1);
+			}
+			
+			if (ball.getPosition().getY() >= canvas.getCoordinateSpaceHeight()) {
+				changeState(GameplayState.LOST_LIVE);
 			}
 		}
 		

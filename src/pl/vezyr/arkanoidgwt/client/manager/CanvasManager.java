@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.RootPanel;
 
+import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.GameplayCanvasWrapper;
@@ -64,7 +65,7 @@ public class CanvasManager {
 	 * Invokes redraw on currently loaded canvas.
 	 * @param dynamicObjects List of dynaminc objects to be drawn on canvas.
 	 */
-	public void redrawCurrentLoadedCanvas(List<GameObject> dynamicObjects) {
-		currentLoadedCanvas.redraw(dynamicObjects);
+	public void redrawCurrentLoadedCanvas(List<GameObject> dynamicObjects, UiData uiData) {
+		currentLoadedCanvas.redraw(dynamicObjects, uiData);
 	}
 }
