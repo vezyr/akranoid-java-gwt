@@ -16,6 +16,10 @@ public class Vector2<T extends Number> {
 		this(null, null);
 	}
 	
+	public Vector2(Vector2<T> vectorToCopy) {
+		this(vectorToCopy.getX(), vectorToCopy.getY());
+	}
+	
 	public Vector2(T x, T y) {
 		this.x = x;
 		this.y = y;

@@ -11,12 +11,12 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
  * @author vezyr
  *
  */
-public class MouseGameplayInputHandler implements InputHandler {
+public class MouseMoveGameplayInputHandler implements InputHandler {
 
 	private EventHandler handler;
 	private Vector2<Integer> mousePosition;
 	
-	public MouseGameplayInputHandler() {
+	public MouseMoveGameplayInputHandler() {
 		mousePosition = new Vector2<Integer>(0, 0);
 		handler = new MouseMoveHandler() {
 			
