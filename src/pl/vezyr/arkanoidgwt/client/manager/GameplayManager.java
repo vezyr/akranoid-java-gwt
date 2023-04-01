@@ -41,6 +41,8 @@ import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
  */
 public class GameplayManager implements CollisionChecker {
 
+	private static final long DEFAULT_TIME_LIMIT = 30*1000;
+	
 	private CanvasManager canvasManager;
 	private InputManager inputManager;
 	
@@ -49,6 +51,8 @@ public class GameplayManager implements CollisionChecker {
 	private List<GameObject> dynamicObjects;
 	
 	private double lastFrameTimestamp = 0;
+	private long gameStartTimestamp;
+	private long remainingTime;
 	private GameplayState state;
 	private PlayerData playerData;
 	
@@ -90,7 +94,9 @@ public class GameplayManager implements CollisionChecker {
 		this.inputManager = new GameplayInputManager(this.canvasManager.getCurrentLoadedCanvas());
 		inputManager.registerHandlers();
 		
-		lastFrameTimestamp = (new Date()).getTime();
+		gameStartTimestamp = (new Date()).getTime();
+		lastFrameTimestamp = gameStartTimestamp;
+		remainingTime = DEFAULT_TIME_LIMIT;
 		playerData = new PlayerData();		
 		GameplayUiData uiData = new GameplayUiData();
 		
@@ -102,10 +108,9 @@ public class GameplayManager implements CollisionChecker {
 			public void execute(double timestamp) {
 				double deltaTime = timestamp - lastFrameTimestamp;
 				
-				
 				inputManager.processInput();
 				update(deltaTime);
-				uiData.updateData(playerData.getNumberOfLives());
+				uiData.updateData(playerData.getNumberOfLives(), remainingTime);
 				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
 				
 				
@@ -172,6 +177,12 @@ public class GameplayManager implements CollisionChecker {
 	
 	private void update(double deltaTime) {
 		Canvas canvas = canvasManager.getCurrentLoadedCanvas().getCanvas();
+		
+		if (remainingTime < 0) {
+			changeState(GameplayState.GAME_LOST);
+		} else {
+			remainingTime -= deltaTime;
+		}
 		
 		if (inputManager.isKeyPressed(KeyCodes.KEY_LEFT)) {
 			int newPos = paddle.getPosition().getX() - 5;
