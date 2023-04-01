@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.canvas.client.Canvas;
 
+import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 
 /**
@@ -20,7 +21,7 @@ public interface CanvasWrapper {
 	 * Redraw the canvas.
 	 * @param dynamicObjects List of dynamic objects to draw on canvas.
 	 */
-	public void redraw(List<GameObject> dynamicObjects);
+	public void redraw(List<GameObject> dynamicObjects, UiData uiData);
 	/**
 	 * Returns the wrapped canvas.
 	 * @return Canvas

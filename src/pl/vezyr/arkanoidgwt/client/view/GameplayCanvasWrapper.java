@@ -7,9 +7,11 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.manager.CanvasManager;
+import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
 
 /**
  * Gameplay canvas wrapper.
@@ -21,6 +23,7 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 
 	private Canvas canvas;
 	private Context2d context;
+	private GameplayUiManager uiManager;
 	
 	public GameplayCanvasWrapper() {
 		canvas = Canvas.createIfSupported();
@@ -36,15 +39,17 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 	@Override
 	public void load() {
 		RootPanel.get(CanvasManager.CANVAS_CONTAINER_ID).add(canvas);
+		uiManager = new GameplayUiManager(this);
 	}
 
 	@Override
-	public void redraw(List<GameObject> dynamicObjects) {
+	public void redraw(List<GameObject> dynamicObjects, UiData uiData) {
 		context.clearRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
 		dynamicObjects.forEach(dynamicObject -> {
 			ImageElement imageElement = ImageElement.as(dynamicObject.getImage().getElement());
 			context.drawImage(imageElement, dynamicObject.getPosition().getX(), dynamicObject.getPosition().getY());
 		});
+		uiManager.updateUi(uiData);
 	}
 
 	@Override
