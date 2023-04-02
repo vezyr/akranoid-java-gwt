@@ -1,5 +1,6 @@
 package pl.vezyr.arkanoidgwt.client.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.client.Canvas;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import pl.vezyr.arkanoidgwt.client.gameobject.GameplayBackground;
 import pl.vezyr.arkanoidgwt.client.manager.CanvasManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
 
@@ -24,6 +26,7 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 	private Canvas canvas;
 	private Context2d context;
 	private GameplayUiManager uiManager;
+	private List<GameObject> staticObjects;
 	
 	public GameplayCanvasWrapper() {
 		canvas = Canvas.createIfSupported();
@@ -34,6 +37,9 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 		canvas.setCoordinateSpaceWidth(1280);
 		canvas.setCoordinateSpaceHeight(800);
 		context = canvas.getContext2d();
+		
+		staticObjects = new ArrayList<GameObject>();
+		staticObjects.add(new GameplayBackground());
 	}
 
 	@Override
@@ -45,15 +51,18 @@ public class GameplayCanvasWrapper implements CanvasWrapper {
 	@Override
 	public void redraw(List<GameObject> dynamicObjects, UiData uiData) {
 		context.clearRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
-		dynamicObjects.forEach(dynamicObject -> {
-			ImageElement imageElement = ImageElement.as(dynamicObject.getImage().getElement());
-			context.drawImage(imageElement, dynamicObject.getPosition().getX(), dynamicObject.getPosition().getY());
-		});
+		staticObjects.forEach(staticObject -> drawGameObject(staticObject));
+		dynamicObjects.forEach(dynamicObject -> drawGameObject(dynamicObject));
 		uiManager.updateUi(uiData);
 	}
 
 	@Override
 	public Canvas getCanvas() {
 		return canvas;
+	}
+	
+	private void drawGameObject(GameObject gameObject) {
+		ImageElement imageElement = ImageElement.as(gameObject.getImage().getElement());
+		context.drawImage(imageElement, gameObject.getPosition().getX(), gameObject.getPosition().getY());
 	}
 }

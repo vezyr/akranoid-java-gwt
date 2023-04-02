@@ -23,6 +23,7 @@ public class ImagesPool {
 	public static final String IMAGE_BLOCK_STRONG_NORMAL = "block_strong_normal";
 	public static final String IMAGE_BLOCK_STRONG_LIGHT_DAMAGE = "block_strong_light_damage";
 	public static final String IMAGE_BLOCK_STRONG_HEAVY_DAMAGE = "block_strong_heavy_damage";
+	public static final String IMAGE_BACKGROUND_GAMEPLAY = "background_gameplay";
 	
 	private static final String IMAGES_CONTAINER_NAME = "images_container";
 	
@@ -47,6 +48,7 @@ public class ImagesPool {
 		images.put(IMAGE_BLOCK_STRONG_NORMAL, new Image("images/blockRed.png"));
 		images.put(IMAGE_BLOCK_STRONG_LIGHT_DAMAGE, new Image("images/blockRedLightDamage.png"));
 		images.put(IMAGE_BLOCK_STRONG_HEAVY_DAMAGE, new Image("images/blockRedHeavyDamage.png"));
+		images.put(IMAGE_BACKGROUND_GAMEPLAY, new Image("images/bg.png"));
 		
 		images.forEach((String key, Image value) -> {
 			value.setVisible(false);
