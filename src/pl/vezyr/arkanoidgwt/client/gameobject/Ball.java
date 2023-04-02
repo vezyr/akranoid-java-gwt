@@ -86,8 +86,8 @@ public class Ball extends GameObject implements Collidable {
 	
 	private void handleOnInProgress(GameplayManager gameplayManager) {
 		// Sets new position
-		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * 6));
-		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * 6));
+		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * gameplayManager.getDifficulty().getBallSpeed()));
+		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * gameplayManager.getDifficulty().getBallSpeed()));
 		
 		// Checks and corrects the position if ball is going outside the Canvas.
 		if(this.getPosition().getX() >= GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {

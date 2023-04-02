@@ -1,5 +1,7 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
+import java.util.logging.Logger;
+
 import pl.vezyr.arkanoidgwt.client.manager.input.GameplayInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
@@ -22,11 +24,17 @@ public class GameManager {
 	private static InputManager inputManager;
 	private static UiManager uiManager;
 	private static SceneManager sceneManager;
+	private static ConfigManager configManager;
+	
+	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
 	public GameManager() {
 		state = GameState.MAIN_MENU;
 		canvasManager = new CanvasManager();
 		gameplayManager = new GameplayManager(canvasManager);
+		configManager = new SimpleInMemeoryConfigManager();
+		configManager.load();
+		logger.info("Game Manager constructed.");
 	}
 	
 	/**
@@ -99,10 +107,18 @@ public class GameManager {
 	}
 	
 	/**
-	 * Return currently loaded Canvas manager.
+	 * Returns currently loaded Canvas manager.
 	 * @return CanvasManager Currently loaded Canvas manager.
 	 */
 	public static CanvasManager getCanvasManager() {
 		return canvasManager;
+	}
+	
+	/**
+	 * Returns currently loaded Config manager.
+	 * @return ConfigManager Loaded Config manager.
+	 */
+	public static ConfigManager getConfigManager() {
+		return configManager;
 	}
 }
