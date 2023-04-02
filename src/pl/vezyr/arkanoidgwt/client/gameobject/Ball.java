@@ -54,6 +54,11 @@ public class Ball extends GameObject implements Collidable {
 		}
 	}
 	
+	@Override
+	public void update(double deltaTime) {
+		super.update(deltaTime);
+	}
+	
 	/**
 	 * Handle the collision between ball and a paddle. 
 	 * As a result the new direction of the ball is set.
