@@ -33,7 +33,7 @@ public class GameplayUiManager implements UiManager {
 		
 		context.setFont("bold 20px Lato");
 		context.setFillStyle("#0A0A0A");
-		context.fillText("Current lives: " + gameplayUiData.getPlayersNumberOfLives(), 45, 30);
+		context.fillText("Current lives: " + gameplayUiData.getPlayersNumberOfLives(), 90, 30);
 		
 		context.setTextAlign(TextAlign.CENTER);
 		context.fillText(formatRemainingTime(gameplayUiData.getRemainingTime()), canvas.getCanvas().getCoordinateSpaceWidth() / 2, 30);

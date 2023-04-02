@@ -7,6 +7,9 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.manager.GameManager;
+import pl.vezyr.arkanoidgwt.client.manager.GameplayManager;
+import pl.vezyr.arkanoidgwt.client.manager.GameplayState;
 
 /**
  * A Ball Game Object.
@@ -57,6 +60,52 @@ public class Ball extends GameObject implements Collidable {
 	@Override
 	public void update(double deltaTime) {
 		super.update(deltaTime);
+		
+		if (!(GameManager.getSceneManager() instanceof GameplayManager)) {
+			return;
+		}
+		GameplayManager gameplayManager = (GameplayManager)GameManager.getSceneManager();
+		
+		switch (gameplayManager.getState()) {
+			case READY_TO_START:
+				handleOnReadyToStart(gameplayManager);
+			break;
+			case IN_PROGRESS:
+				handleOnInProgress(gameplayManager);
+			break;
+		}
+	}
+	
+	private void handleOnReadyToStart(GameplayManager gameplayManager) {
+		Paddle paddle = gameplayManager.getPaddle();
+		getPosition().set(
+			paddle.getPosition().getX() + (paddle.getImage().getWidth() / 2) - (this.getImage().getWidth() / 2), 
+			paddle.getPosition().getY() - this.getImage().getHeight()
+		);
+	}
+	
+	private void handleOnInProgress(GameplayManager gameplayManager) {
+		// Sets new position
+		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * 6));
+		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * 6));
+		
+		// Checks and corrects the position if ball is going outside the Canvas.
+		if(this.getPosition().getX() >= GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {
+			this.getPosition().setX(GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth() - 1);
+			this.getDirection().setX(this.getDirection().getX() * -1);
+		} else if(this.getPosition().getX() <= 0) {
+			this.getPosition().setX(1);
+			this.getDirection().setX(this.getDirection().getX() * -1);
+		} 
+		if(this.getPosition().getY() <= 0) {
+			this.getPosition().setY(1);
+			this.getDirection().setY(this.getDirection().getY() * -1);
+		}
+		
+		// Changes the state to LOST_LIVE if ball went down outside the Canvas
+		if (this.getPosition().getY() >= GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceHeight()) {
+			gameplayManager.changeState(GameplayState.LOST_LIVE);
+		}
 	}
 	
 	/**

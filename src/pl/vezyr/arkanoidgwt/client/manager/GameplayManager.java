@@ -39,12 +39,11 @@ import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
  * @author vezyr
  * @see pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker
  */
-public class GameplayManager implements CollisionChecker {
+public class GameplayManager implements SceneManager, CollisionChecker {
 
 	private static final long DEFAULT_TIME_LIMIT = 30*1000;
 	
 	private CanvasManager canvasManager;
-	private InputManager inputManager;
 	
 	private Ball ball;
 	private Paddle paddle;
@@ -71,8 +70,7 @@ public class GameplayManager implements CollisionChecker {
 	 * Initialize any additional objects and run main game loop.
 	 */
 	public void run() {
-		this.inputManager = new GameplayInputManager(this.canvasManager.getCurrentLoadedCanvas());
-		inputManager.registerHandlers();
+		GameManager.getInputManager().registerHandlers();
 		
 		resetState();
 		
@@ -85,7 +83,7 @@ public class GameplayManager implements CollisionChecker {
 			public void execute(double timestamp) {
 				double deltaTime = timestamp - lastFrameTimestamp;
 				
-				inputManager.processInput();
+				GameManager.getInputManager().processInput();
 				update(deltaTime);
 				uiData.updateData(playerData.getNumberOfLives(), remainingTime, state);
 				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
@@ -126,16 +124,27 @@ public class GameplayManager implements CollisionChecker {
 		playerData = new PlayerData();		
 	}
 	
-	private void changeState(GameplayState newState) {
+	/**
+	 * Changes the state of the gameplay to the new state.
+	 * If the new state is the same as old, no action is performed,
+	 * so it's safe to invoke this method multiple times.
+	 * @param newState GameplayState New state to set.
+	 */
+	public void changeState(GameplayState newState) {
 		if(newState == state) {
 			return;
 		}
 		
 		switch(state) {
 			case READY_TO_START:
-				if (newState == GameplayState.IN_PROGRESS) {
-					state = newState;
-					onStateChangeToInProgress();
+				switch (newState) {
+					case IN_PROGRESS:
+						state = newState;
+						onStateChangeToInProgress();
+					break;
+					case GAME_LOST:
+						state = newState;
+					break;
 				}
 			break;
 			case IN_PROGRESS:
@@ -173,9 +182,9 @@ public class GameplayManager implements CollisionChecker {
 	
 	private void onStateChangeToInProgress() {
 		float xAngle = 0;
-		if (inputManager.isKeyPressed(KeyCodes.KEY_LEFT)) {
+		if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_LEFT)) {
 			xAngle = (float)Math.sin(Math.toRadians(-45));
-		} else if (inputManager.isKeyPressed(KeyCodes.KEY_RIGHT)) {
+		} else if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_RIGHT)) {
 			xAngle = (float)Math.sin(Math.toRadians(45));
 		}
 		ball.getDirection().set(xAngle, (float)Math.sin(Math.toRadians(-45)));
@@ -190,60 +199,31 @@ public class GameplayManager implements CollisionChecker {
 	}
 	
 	private void update(double deltaTime) {
-		Canvas canvas = canvasManager.getCurrentLoadedCanvas().getCanvas();
-		
 		if (remainingTime < 0) {
 			changeState(GameplayState.GAME_LOST);
 		} else {
 			remainingTime -= deltaTime;
 		}
 		
-		if (inputManager.isKeyPressed(KeyCodes.KEY_LEFT)) {
-			int newPos = paddle.getPosition().getX() - 5;
-			paddle.getPosition().setX(newPos > 0 ? newPos : 1);
-		} else if (inputManager.isKeyPressed(KeyCodes.KEY_RIGHT)) {
-			int newPos = paddle.getPosition().getX() + 5;
-			paddle.getPosition().setX(newPos < canvas.getCoordinateSpaceWidth() - paddle.getImage().getWidth() ? newPos : canvas.getCoordinateSpaceWidth() - paddle.getImage().getWidth());
-		} else if (inputManager.hasMouseMoved()) { 
-			if (inputManager.getMousePosition().getX() > 0 && inputManager.getMousePosition().getX() < canvas.getCoordinateSpaceWidth() - paddle.getImage().getWidth()) {
-				paddle.getPosition().setX(inputManager.getMousePosition().getX());
-			}
-		}
-		
 		if (state == GameplayState.READY_TO_START) {
-			if (inputManager.isKeyPressed(KeyCodes.KEY_SPACE)) {
+			if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_SPACE)) {
 				changeState(GameplayState.IN_PROGRESS);
 			}
-			ball.getPosition().set(
-				paddle.getPosition().getX() + (paddle.getImage().getWidth() / 2) - (ball.getImage().getWidth() / 2), 
-				paddle.getPosition().getY() - ball.getImage().getHeight()
-			);
-		} else if (state == GameplayState.IN_PROGRESS) {
-			ball.getPosition().setX((int)(ball.getPosition().getX() + ball.getDirection().getX() * 6));
-			ball.getPosition().setY((int)(ball.getPosition().getY() + ball.getDirection().getY() * 6));
-			
-			if(ball.getPosition().getX() >= canvas.getCoordinateSpaceWidth() - ball.getImage().getWidth()) {
-				ball.getPosition().setX(canvas.getCoordinateSpaceWidth() - ball.getImage().getWidth() - 1);
-				ball.getDirection().setX(ball.getDirection().getX() * -1);
-			} else if(ball.getPosition().getX() <= 0) {
-				ball.getPosition().setX(1);
-				ball.getDirection().setX(ball.getDirection().getX() * -1);
-			} 
-			
-			if(ball.getPosition().getY() <= 0) {
-				ball.getPosition().setY(1);
-				ball.getDirection().setY(ball.getDirection().getY() * -1);
-			}
-			
-			if (ball.getPosition().getY() >= canvas.getCoordinateSpaceHeight()) {
-				changeState(GameplayState.LOST_LIVE);
-			}
 		} else if (state == GameplayState.GAME_LOST) {
-			if (inputManager.isKeyPressed(KeyCodes.KEY_R)) {
+			if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_R)) {
 				changeState(GameplayState.READY_TO_START);
 			}
 		}
 		
+		paddle.update(deltaTime);
+		ball.update(deltaTime);
+		dynamicObjects.forEach(dynamicObj -> dynamicObj.update(deltaTime));
+		
+		checkCollisions();
+	}
+	
+	@Override
+	public void checkCollisions() {
 		List<GameObject> objectsToRemove = new ArrayList<GameObject>();
 		CollisionResult paddleCollision = checkCollision(ball, (Collidable)paddle);
 		ball.handleCollision(paddleCollision);
@@ -297,4 +277,11 @@ public class GameplayManager implements CollisionChecker {
 		return new CollisionResult(collision, collision ? pointOnRectClosestToBall : null, collision ? rect : null);
 	}
 	
+	public GameplayState getState() {
+		return state;
+	}
+	
+	public Paddle getPaddle() {
+		return paddle;
+	}
 }
