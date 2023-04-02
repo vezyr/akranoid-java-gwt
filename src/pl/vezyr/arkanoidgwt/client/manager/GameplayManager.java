@@ -7,12 +7,12 @@ import java.util.List;
 
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.event.dom.client.KeyCodes;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
+import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -27,8 +27,6 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
-import pl.vezyr.arkanoidgwt.client.manager.input.GameplayInputManager;
-import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
 
 /**
  * Main gameplay manager.
@@ -40,8 +38,6 @@ import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
  * @see pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker
  */
 public class GameplayManager implements SceneManager, CollisionChecker {
-
-	private static final long DEFAULT_TIME_LIMIT = 30*1000;
 	
 	private CanvasManager canvasManager;
 	
@@ -54,6 +50,7 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	private long remainingTime;
 	private GameplayState state;
 	private PlayerData playerData;
+	private DifficultyLevel difficulty;
 	
 	/**
 	 * Contructor of the GameplayManager with reference to the CanvasManager as parameter.
@@ -71,6 +68,7 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	 */
 	public void run() {
 		GameManager.getInputManager().registerHandlers();
+		difficulty = GameManager.getConfigManager().getDifficutlyLevel(5);
 		
 		resetState();
 		
@@ -120,7 +118,7 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		
 		gameStartTimestamp = (new Date()).getTime();
 		lastFrameTimestamp = gameStartTimestamp;
-		remainingTime = DEFAULT_TIME_LIMIT;
+		remainingTime = difficulty.getTimeLimit();
 		playerData = new PlayerData();		
 	}
 	
@@ -283,5 +281,9 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	
 	public Paddle getPaddle() {
 		return paddle;
+	}
+	
+	public DifficultyLevel getDifficulty() {
+		return difficulty;
 	}
 }
