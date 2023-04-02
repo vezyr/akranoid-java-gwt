@@ -14,6 +14,14 @@ package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 public interface CollisionChecker {
 	
 	/**
+	 * Choose and check collisions between selected objects.
+	 * Usually implementation of this method 
+	 * chooses the objects to check and then invokes
+	 * {@code checkCollision} on each pair.
+	 */
+	public void checkCollisions();
+	
+	/**
 	 * Performs check the one objects collides with other.
 	 * @param obj1 GameObject First object.
 	 * @param obj2 GameObject Second object.

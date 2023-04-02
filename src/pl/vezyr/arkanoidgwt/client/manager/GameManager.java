@@ -1,5 +1,10 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
+import pl.vezyr.arkanoidgwt.client.manager.input.GameplayInputManager;
+import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
+import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
+import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
+
 /**
  * Main manger of the game.
  * Handles different states of the game,
@@ -10,8 +15,13 @@ package pl.vezyr.arkanoidgwt.client.manager;
 public class GameManager {
 
 	private GameState state = null;
-	private CanvasManager canvasManager;
-	private GameplayManager gameplayManager;
+	
+	private static GameplayManager gameplayManager;
+	
+	private static CanvasManager canvasManager;
+	private static InputManager inputManager;
+	private static UiManager uiManager;
+	private static SceneManager sceneManager;
 	
 	public GameManager() {
 		state = GameState.MAIN_MENU;
@@ -51,6 +61,9 @@ public class GameManager {
 	 */
 	private void onStateChangeToGameplay() {
 		canvasManager.loadCanvasFor(GameState.GAMEPLAY);
+		inputManager = new GameplayInputManager(canvasManager.getCurrentLoadedCanvas());
+		uiManager = new GameplayUiManager(canvasManager.getCurrentLoadedCanvas());
+		sceneManager = gameplayManager;
 		gameplayManager.run();
 	}
 	
@@ -59,5 +72,37 @@ public class GameManager {
 	 */
 	private void onStateChangeToMainMenu() {
 		
+	}
+	
+	/**
+	 * Returns currently loaded Input manager.
+	 * @return InputManager Currently loaded Input manager.
+	 */
+	public static InputManager getInputManager() {
+		return inputManager;
+	}
+	
+	/**
+	 * Returns currently loaded UI manager.
+	 * @return UiManager Currently loaded UI manager.
+	 */
+	public static UiManager getUiManager() { 
+		return uiManager;
+	}
+	
+	/**
+	 * Returns currently loaded Scene manager.
+	 * @return SceneManager Currently loaded Scene manager.
+	 */
+	public static SceneManager getSceneManager() {
+		return sceneManager;
+	}
+	
+	/**
+	 * Return currently loaded Canvas manager.
+	 * @return CanvasManager Currently loaded Canvas manager.
+	 */
+	public static CanvasManager getCanvasManager() {
+		return canvasManager;
 	}
 }
