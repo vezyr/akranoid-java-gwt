@@ -1,10 +1,19 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.Logger;
 
-import pl.vezyr.arkanoidgwt.client.manager.input.GameplayInputManager;
+import com.google.gwt.animation.client.AnimationScheduler;
+import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
+import com.google.gwt.event.shared.HandlerManager;
+
+import pl.vezyr.arkanoidgwt.client.event.ArkanoidGwtEvent;
+import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
+import pl.vezyr.arkanoidgwt.client.view.ui.MainMenuUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
 
 /**
@@ -19,6 +28,7 @@ public class GameManager {
 	private GameState state = null;
 	
 	private static GameplayManager gameplayManager;
+	private static MainMenuManager mainMenuManager;
 	
 	private static CanvasManager canvasManager;
 	private static InputManager inputManager;
@@ -26,15 +36,50 @@ public class GameManager {
 	private static SceneManager sceneManager;
 	private static ConfigManager configManager;
 	
+	private double lastFrameTimestamp = 0;
+	
+	private static final Queue<ArkanoidGwtEvent> eventsQueue = new LinkedList<ArkanoidGwtEvent>();
+	
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
 	public GameManager() {
-		state = GameState.MAIN_MENU;
-		canvasManager = new CanvasManager();
-		gameplayManager = new GameplayManager(canvasManager);
 		configManager = new SimpleInMemeoryConfigManager();
 		configManager.load();
+		
+		canvasManager = new CanvasManager();
+		gameplayManager = new GameplayManager(canvasManager);
+		mainMenuManager = new MainMenuManager();
+		
+		onStateChangeToMainMenu();
+		state = GameState.MAIN_MENU;
+		
 		logger.info("Game Manager constructed.");
+	}
+	
+	/**
+	 * Entry point of the game.
+	 * Initialize any additional objects and run main game loop.
+	 */
+	public void run() {
+		// Animation callback used as game loop to sync
+		// frame rate with platform.
+		AnimationCallback gameLoop = new AnimationCallback() {
+			
+			@Override
+			public void execute(double timestamp) {
+				double deltaTime = timestamp - lastFrameTimestamp;
+				
+				inputManager.processInput();
+				handleEventsQueue();				
+				sceneManager.update(deltaTime);
+				sceneManager.redraw();
+				
+				lastFrameTimestamp = timestamp;
+				AnimationScheduler.get().requestAnimationFrame(this);
+			}
+		};
+		
+		 AnimationScheduler.get().requestAnimationFrame(gameLoop);
 	}
 	
 	/**
@@ -69,7 +114,7 @@ public class GameManager {
 	 */
 	private void onStateChangeToGameplay() {
 		canvasManager.loadCanvasFor(GameState.GAMEPLAY);
-		inputManager = new GameplayInputManager(canvasManager.getCurrentLoadedCanvas());
+		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
 		uiManager = new GameplayUiManager(canvasManager.getCurrentLoadedCanvas());
 		sceneManager = gameplayManager;
 		gameplayManager.run();
@@ -79,7 +124,21 @@ public class GameManager {
 	 * Action to perform when loading MainMenu state.
 	 */
 	private void onStateChangeToMainMenu() {
-		
+		canvasManager.loadCanvasFor(GameState.MAIN_MENU);
+		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
+		uiManager = new MainMenuUiManager();
+		sceneManager = mainMenuManager;
+		mainMenuManager.run();
+	}
+	
+	private void handleEventsQueue() {
+		ArkanoidGwtEvent event = eventsQueue.poll();
+		while (event != null) {
+			if (event instanceof NewGameButtonClickEvent) {
+				changeState(GameState.GAMEPLAY);
+			}
+			event = eventsQueue.poll();
+		}
 	}
 	
 	/**
@@ -120,5 +179,9 @@ public class GameManager {
 	 */
 	public static ConfigManager getConfigManager() {
 		return configManager;
+	}
+	
+	public static void dispatchEvent(ArkanoidGwtEvent event) {
+		eventsQueue.add(event);
 	}
 }

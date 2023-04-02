@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.animation.client.AnimationScheduler;
-import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.event.dom.client.KeyCodes;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
@@ -45,11 +43,11 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	private Paddle paddle;
 	private List<GameObject> dynamicObjects;
 	
-	private double lastFrameTimestamp = 0;
 	private long gameStartTimestamp;
 	private long remainingTime;
 	private GameplayState state;
 	private PlayerData playerData;
+	private GameplayUiData uiData;
 	private DifficultyLevel difficulty;
 	
 	/**
@@ -72,27 +70,8 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		
 		resetState();
 		
-		GameplayUiData uiData = new GameplayUiData();
+		uiData = new GameplayUiData();
 		state = GameplayState.READY_TO_START;
-		
-		AnimationCallback gameplayAnimationCallback = new AnimationCallback() {
-			
-			@Override
-			public void execute(double timestamp) {
-				double deltaTime = timestamp - lastFrameTimestamp;
-				
-				GameManager.getInputManager().processInput();
-				update(deltaTime);
-				uiData.updateData(playerData.getNumberOfLives(), remainingTime, state);
-				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
-				
-				
-				lastFrameTimestamp = timestamp;
-				AnimationScheduler.get().requestAnimationFrame(this);
-			}
-		};
-		
-		AnimationScheduler.get().requestAnimationFrame(gameplayAnimationCallback);
 	}
 	
 	private void resetState() {
@@ -117,7 +96,6 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		}
 		
 		gameStartTimestamp = (new Date()).getTime();
-		lastFrameTimestamp = gameStartTimestamp;
 		remainingTime = difficulty.getTimeLimit();
 		playerData = new PlayerData();		
 	}
@@ -196,7 +174,8 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		}
 	}
 	
-	private void update(double deltaTime) {
+	@Override
+	public void update(double deltaTime) {
 		if (remainingTime < 0) {
 			changeState(GameplayState.GAME_LOST);
 		} else {
@@ -218,6 +197,12 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		dynamicObjects.forEach(dynamicObj -> dynamicObj.update(deltaTime));
 		
 		checkCollisions();
+	}
+	
+	@Override
+	public void redraw() {
+		uiData.updateData(playerData.getNumberOfLives(), remainingTime, state);
+		canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
 	}
 	
 	@Override

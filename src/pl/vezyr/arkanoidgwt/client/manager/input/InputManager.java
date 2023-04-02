@@ -30,11 +30,31 @@ public interface InputManager {
 	public boolean hasMouseMoved();
 	
 	/**
+	 * Checks if mouse button is currently pressed (down).
+	 * @param button Button's code.
+	 * @return boolean True if button is pressed, false otherwise.
+	 */
+	public boolean isMouseButtonPressed(int button);
+	
+	/**
 	 * Checks if key is currently pressed (down).
 	 * @return boolean True if key is pressed, false otherwise.
 	 * 
 	 */
 	public boolean isKeyPressed(int key);
+	
+	/**
+	 * Returns the code of last released mouse button.
+	 * @return int Code of released button.
+	 */
+	public int getLastReleasedButton();
+	
+	/**
+	 * Checks if specified button was released in current frame.
+	 * @param button Button's code.
+	 * @return boolean True if button was released in the current frame, false otherwise.
+	 */
+	public boolean isButtonJustReleased(int button);
 	
 	/**
 	 * Do any specific calculations on input.

@@ -20,7 +20,8 @@ public class ArkanoidGwt implements EntryPoint {
 			public void execute() {
 				if (ImagesPool.isPoolAttached()) {
 					GameManager gameManager = new GameManager();
-					gameManager.changeState(GameState.GAMEPLAY);
+					gameManager.changeState(GameState.MAIN_MENU);
+					gameManager.run();
 				} else {
 					Scheduler.get().scheduleDeferred(this);
 				}

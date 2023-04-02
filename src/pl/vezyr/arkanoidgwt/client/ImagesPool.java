@@ -25,6 +25,10 @@ public class ImagesPool {
 	public static final String IMAGE_BLOCK_STRONG_HEAVY_DAMAGE = "block_strong_heavy_damage";
 	public static final String IMAGE_BACKGROUND_GAMEPLAY = "background_gameplay";
 	
+	public static final String UI_BUTTON_BLUE_NORMAL = "ui_button_blue_normal";
+	public static final String UI_BUTTON_YELLOW_NORMAL = "ui_button_yellow_normal";
+	public static final String UI_BUTTON_YELLOW_PRESSED = "ui_button_yellow_pressed";
+	
 	private static final String IMAGES_CONTAINER_NAME = "images_container";
 	
 	private static Map<String, Image> images = new HashMap<String, Image>();
@@ -49,6 +53,9 @@ public class ImagesPool {
 		images.put(IMAGE_BLOCK_STRONG_LIGHT_DAMAGE, new Image("images/blockRedLightDamage.png"));
 		images.put(IMAGE_BLOCK_STRONG_HEAVY_DAMAGE, new Image("images/blockRedHeavyDamage.png"));
 		images.put(IMAGE_BACKGROUND_GAMEPLAY, new Image("images/bg.png"));
+		images.put(UI_BUTTON_BLUE_NORMAL, new Image("images/ui/button_blue_normal.png"));
+		images.put(UI_BUTTON_YELLOW_NORMAL, new Image("images/ui/button_yellow_normal.png"));
+		images.put(UI_BUTTON_YELLOW_PRESSED, new Image("images/ui/button_yellow_pressed.png"));
 		
 		images.forEach((String key, Image value) -> {
 			value.setVisible(false);
