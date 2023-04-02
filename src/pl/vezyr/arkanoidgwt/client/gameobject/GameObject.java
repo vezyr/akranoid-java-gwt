@@ -37,4 +37,10 @@ public abstract class GameObject {
 	public Image getImage() {
 		return image;
 	}
+	
+	/**
+	 * Called every frame
+	 */
+	public void update(double deltaTime) {
+	}
 }

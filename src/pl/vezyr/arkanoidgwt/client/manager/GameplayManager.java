@@ -64,7 +64,42 @@ public class GameplayManager implements CollisionChecker {
 	 */
 	public GameplayManager(CanvasManager canvasManager) {
 		this.canvasManager = canvasManager;
+	}
+	
+	/**
+	 * Entry point of the gameplay.
+	 * Initialize any additional objects and run main game loop.
+	 */
+	public void run() {
+		this.inputManager = new GameplayInputManager(this.canvasManager.getCurrentLoadedCanvas());
+		inputManager.registerHandlers();
 		
+		resetState();
+		
+		GameplayUiData uiData = new GameplayUiData();
+		state = GameplayState.READY_TO_START;
+		
+		AnimationCallback gameplayAnimationCallback = new AnimationCallback() {
+			
+			@Override
+			public void execute(double timestamp) {
+				double deltaTime = timestamp - lastFrameTimestamp;
+				
+				inputManager.processInput();
+				update(deltaTime);
+				uiData.updateData(playerData.getNumberOfLives(), remainingTime, state);
+				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
+				
+				
+				lastFrameTimestamp = timestamp;
+				AnimationScheduler.get().requestAnimationFrame(this);
+			}
+		};
+		
+		AnimationScheduler.get().requestAnimationFrame(gameplayAnimationCallback);
+	}
+	
+	private void resetState() {
 		ball = new Ball(new Vector2<Integer>(700, 700), ImagesPool.getImage(ImagesPool.IMAGE_BALL));
 		paddle = new Paddle(new Vector2<Integer>(640, 720), ImagesPool.getImage(ImagesPool.IMAGE_PADDLE));
 		
@@ -84,42 +119,11 @@ public class GameplayManager implements CollisionChecker {
 				dynamicObjects.add(blockToAdd);
 			}
 		}
-	}
-	
-	/**
-	 * Entry point of the gameplay.
-	 * Initialize any additional objects and run main game loop.
-	 */
-	public void run() {
-		this.inputManager = new GameplayInputManager(this.canvasManager.getCurrentLoadedCanvas());
-		inputManager.registerHandlers();
 		
 		gameStartTimestamp = (new Date()).getTime();
 		lastFrameTimestamp = gameStartTimestamp;
 		remainingTime = DEFAULT_TIME_LIMIT;
 		playerData = new PlayerData();		
-		GameplayUiData uiData = new GameplayUiData();
-		
-		state = GameplayState.READY_TO_START;
-		
-		AnimationCallback gameplayAnimationCallback = new AnimationCallback() {
-			
-			@Override
-			public void execute(double timestamp) {
-				double deltaTime = timestamp - lastFrameTimestamp;
-				
-				inputManager.processInput();
-				update(deltaTime);
-				uiData.updateData(playerData.getNumberOfLives(), remainingTime);
-				canvasManager.getCurrentLoadedCanvas().redraw(dynamicObjects, uiData);
-				
-				
-				lastFrameTimestamp = timestamp;
-				AnimationScheduler.get().requestAnimationFrame(this);
-			}
-		};
-		
-		AnimationScheduler.get().requestAnimationFrame(gameplayAnimationCallback);
 	}
 	
 	private void changeState(GameplayState newState) {
@@ -135,9 +139,14 @@ public class GameplayManager implements CollisionChecker {
 				}
 			break;
 			case IN_PROGRESS:
-				if (newState == GameplayState.LOST_LIVE) {
-					state = newState;
-					onStateChangeToLostLive();
+				switch (newState) {
+					case LOST_LIVE:
+						state = newState;
+						onStateChangeToLostLive();
+					break;
+					case GAME_LOST:
+						state = newState;
+					break;
 				}
 			break;
 			case LOST_LIVE:
@@ -146,6 +155,7 @@ public class GameplayManager implements CollisionChecker {
 						state = newState;
 					break;
 					case GAME_LOST:
+						state = newState;
 					break;
 				}
 			break;
@@ -153,6 +163,10 @@ public class GameplayManager implements CollisionChecker {
 				
 			break;
 			case GAME_LOST:
+				if (newState == GameplayState.READY_TO_START) {
+					state = newState;
+					resetState();
+				}
 			break;
 		}
 	}
@@ -196,11 +210,10 @@ public class GameplayManager implements CollisionChecker {
 			}
 		}
 		
-		if (inputManager.isKeyPressed(KeyCodes.KEY_SPACE)) {
-			changeState(GameplayState.IN_PROGRESS);
-		}
-		
 		if (state == GameplayState.READY_TO_START) {
+			if (inputManager.isKeyPressed(KeyCodes.KEY_SPACE)) {
+				changeState(GameplayState.IN_PROGRESS);
+			}
 			ball.getPosition().set(
 				paddle.getPosition().getX() + (paddle.getImage().getWidth() / 2) - (ball.getImage().getWidth() / 2), 
 				paddle.getPosition().getY() - ball.getImage().getHeight()
@@ -224,6 +237,10 @@ public class GameplayManager implements CollisionChecker {
 			
 			if (ball.getPosition().getY() >= canvas.getCoordinateSpaceHeight()) {
 				changeState(GameplayState.LOST_LIVE);
+			}
+		} else if (state == GameplayState.GAME_LOST) {
+			if (inputManager.isKeyPressed(KeyCodes.KEY_R)) {
+				changeState(GameplayState.READY_TO_START);
 			}
 		}
 		

@@ -5,6 +5,7 @@ import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.UiData;
+import pl.vezyr.arkanoidgwt.client.manager.GameplayState;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 
 /**
@@ -32,10 +33,14 @@ public class GameplayUiManager implements UiManager {
 		
 		context.setFont("bold 20px Lato");
 		context.setFillStyle("#0A0A0A");
-		context.fillText("Current lives: " + gameplayUiData.getPlayersNumberOfLives(), 15, 30);
+		context.fillText("Current lives: " + gameplayUiData.getPlayersNumberOfLives(), 45, 30);
 		
 		context.setTextAlign(TextAlign.CENTER);
 		context.fillText(formatRemainingTime(gameplayUiData.getRemainingTime()), canvas.getCanvas().getCoordinateSpaceWidth() / 2, 30);
+		
+		if (gameplayUiData.getState() == GameplayState.GAME_LOST) {
+			context.fillText("You Lost! Press R to play again.", canvas.getCanvas().getCoordinateSpaceWidth() / 2, canvas.getCanvas().getCoordinateSpaceHeight() / 2);
+		}
 	}
 	
 	private String formatRemainingTime(long remainingTime) {
