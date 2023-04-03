@@ -1,5 +1,7 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.ui.Image;
 
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
@@ -42,5 +44,16 @@ public abstract class GameObject {
 	 * Called every frame
 	 */
 	public void update(double deltaTime) {
+	}
+	
+	/**
+	 * Draws the current object using passed context.
+	 * Override this method if objects should be drawn in any
+	 * specific way. 
+	 * @param context
+	 */
+	public void draw(Context2d context) {
+		ImageElement imageElement = ImageElement.as(getImage().getElement());
+		context.drawImage(imageElement, getPosition().getX(), getPosition().getY());
 	}
 }

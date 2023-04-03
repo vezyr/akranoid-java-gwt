@@ -6,12 +6,16 @@ import java.util.logging.Logger;
 
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.dom.client.NativeEvent;
 
 import pl.vezyr.arkanoidgwt.client.event.ArkanoidGwtEvent;
 import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
 import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
+import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
+import pl.vezyr.arkanoidgwt.client.register.UiElementsRegister;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.MainMenuUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
@@ -70,12 +74,15 @@ public class GameManager {
 				double deltaTime = timestamp - lastFrameTimestamp;
 				
 				inputManager.processInput();
-				handleEventsQueue();				
+				notifyAllInputHandlers();
+				handleEventsQueue();
 				sceneManager.update(deltaTime);
 				sceneManager.redraw();
 				
 				lastFrameTimestamp = timestamp;
-				AnimationScheduler.get().requestAnimationFrame(this);
+				if (state != GameState.QUIT_GAME) {
+					AnimationScheduler.get().requestAnimationFrame(this);
+				}
 			}
 		};
 		
@@ -97,6 +104,9 @@ public class GameManager {
 			case MAIN_MENU:
 				if(newState == GameState.GAMEPLAY) {
 					onStateChangeToGameplay();
+					state = newState;
+				} else if (newState == GameState.QUIT_GAME) {
+					onStateChangeToQuitGame();
 					state = newState;
 				}
 			break;
@@ -131,13 +141,44 @@ public class GameManager {
 		mainMenuManager.run();
 	}
 	
+	/**
+	 * Action to perform when quiting game.
+	 */
+	private void onStateChangeToQuitGame() {
+		canvasManager.unloadAllFromCanvasContainer();
+	}
+	
+	/**
+	 * Handles the queued events.
+	 * Dequeue all events and take action on each.
+	 */
 	private void handleEventsQueue() {
 		ArkanoidGwtEvent event = eventsQueue.poll();
 		while (event != null) {
 			if (event instanceof NewGameButtonClickEvent) {
 				changeState(GameState.GAMEPLAY);
+			} else if (event instanceof QuitGameButtonClickEvent) {
+				changeState(GameState.QUIT_GAME);
 			}
 			event = eventsQueue.poll();
+		}
+	}
+	
+	/**
+	 * Notify all input handlers register in the UiElementsRegister
+	 * about the processed input.
+	 * @see pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler
+	 * @see pl.vezyr.arkanoidgwt.client.register.UiElementsRegister
+	 */
+	private void notifyAllInputHandlers() {
+		for (UiElement elem : UiElementsRegister.getActiveReferences()) {
+			if (elem instanceof MouseInputHandler) {
+				((MouseInputHandler)elem).handleMouseInput(
+					inputManager.getMousePosition(),
+					inputManager.isMouseButtonPressed(NativeEvent.BUTTON_LEFT),
+					inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)
+				);
+			}
 		}
 	}
 	
@@ -181,6 +222,11 @@ public class GameManager {
 		return configManager;
 	}
 	
+	/**
+	 * Dispatch event - add event to queue to be 
+	 * processed on next frame.
+	 * @param event Event to queue.
+	 */
 	public static void dispatchEvent(ArkanoidGwtEvent event) {
 		eventsQueue.add(event);
 	}
