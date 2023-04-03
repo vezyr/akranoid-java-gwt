@@ -3,22 +3,20 @@ package pl.vezyr.arkanoidgwt.client.register;
 import java.util.HashSet;
 import java.util.Set;
 
-import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
-
-public class UiElementsRegister {
+public class ObjectsRegister {
 
 	// It could be better to use WeakReference<UiElement> 
 	// but GWT dosen't support it.
-	private static final Set<UiElement> references = new HashSet<UiElement>();
+	private static final Set<Object> references = new HashSet<Object>();
 	
-	public static final void register(UiElement object) {
+	public static final void register(Object object) {
 		references.add(object);
 	}
 	
-	public static final Set<UiElement> getActiveReferences() {
-		Set<UiElement> result = new HashSet<UiElement>();
+	public static final Set<Object> getActiveReferences() {
+		Set<Object> result = new HashSet<Object>();
 		
-		for(UiElement ref : references) {
+		for(Object ref : references) {
 			if (ref != null) {
 				result.add(ref);
 			}

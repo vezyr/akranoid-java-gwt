@@ -12,7 +12,7 @@ import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
-import pl.vezyr.arkanoidgwt.client.register.UiElementsRegister;
+import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 public class Button extends UiElement implements MouseInputHandler, Registrable {
@@ -76,7 +76,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	
 	@Override
 	public void register() {
-		UiElementsRegister.register(this);
+		ObjectsRegister.register(this);
 	}
 	
 	@Override
@@ -104,5 +104,14 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 */
 	public void setState(ButtonState state) {
 		this.state = state;
+	}
+	
+	/**
+	 * Sets that this button is selected, not necessary 
+	 * by pointing by mouse (ie. during keyboard usage).
+	 * @param selected Is button selected (true) or not (false)
+	 */
+	public void setSelected(boolean selected) {
+		setState(selected ? ButtonState.HOVER : ButtonState.NORMAL);
 	}
 }

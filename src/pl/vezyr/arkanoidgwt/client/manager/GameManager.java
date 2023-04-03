@@ -14,8 +14,9 @@ import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
 import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
+import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
-import pl.vezyr.arkanoidgwt.client.register.UiElementsRegister;
+import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.MainMenuUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
@@ -168,15 +169,31 @@ public class GameManager {
 	 * Notify all input handlers register in the UiElementsRegister
 	 * about the processed input.
 	 * @see pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler
-	 * @see pl.vezyr.arkanoidgwt.client.register.UiElementsRegister
+	 * @see pl.vezyr.arkanoidgwt.client.register.ObjectsRegister
 	 */
 	private void notifyAllInputHandlers() {
-		for (UiElement elem : UiElementsRegister.getActiveReferences()) {
-			if (elem instanceof MouseInputHandler) {
-				((MouseInputHandler)elem).handleMouseInput(
-					inputManager.getMousePosition(),
-					inputManager.isMouseButtonPressed(NativeEvent.BUTTON_LEFT),
-					inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)
+		for (Object elem : ObjectsRegister.getActiveReferences()) {
+			// Notify only if mouse state changed.
+			// It's prevent state mismatch if player doesn't use mouse
+			// and operate only by keyboard
+			if (inputManager.hasMouseMoved() ||
+				inputManager.isButtonJustPressed(NativeEvent.BUTTON_LEFT) || 
+				inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)) {
+				
+				if (elem instanceof MouseInputHandler) {
+					((MouseInputHandler)elem).handleMouseInput(
+						inputManager.getMousePosition(),
+						inputManager.isMouseButtonPressed(NativeEvent.BUTTON_LEFT),
+						inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)
+					);
+				}
+				
+			}
+			
+			if (elem instanceof KeyboardInputHandler) {
+				((KeyboardInputHandler)elem).handleKeyboardInput(
+					inputManager.getAllPressedKeys(),
+					inputManager.getLastReleasedKey()
 				);
 			}
 		}
