@@ -8,6 +8,7 @@ import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.GameplayCanvasWrapper;
+import pl.vezyr.arkanoidgwt.client.view.MainMenuCanvasWrapper;
 
 /**
  * Manager class to handle different canvas, depends on different game's states.
@@ -19,10 +20,12 @@ public class CanvasManager {
 	public static final String CANVAS_CONTAINER_ID = "canvas";
 	
 	private CanvasWrapper gameplayCanvas;
+	private CanvasWrapper mainMenuCanvas;
 	private CanvasWrapper currentLoadedCanvas;
 	
 	public CanvasManager() {
 		gameplayCanvas = new GameplayCanvasWrapper();
+		mainMenuCanvas = new MainMenuCanvasWrapper();
 	}
 	
 	/**
@@ -34,7 +37,9 @@ public class CanvasManager {
 	public void loadCanvasFor(GameState gameState) {
 		switch(gameState) {
 			case MAIN_MENU:
-				
+				unloadAllFromCanvasContainer();
+				mainMenuCanvas.load();
+				currentLoadedCanvas = mainMenuCanvas;
 			break;
 			case GAMEPLAY:
 				unloadAllFromCanvasContainer();

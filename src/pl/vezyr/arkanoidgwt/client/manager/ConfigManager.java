@@ -3,6 +3,7 @@ package pl.vezyr.arkanoidgwt.client.manager;
 import java.util.List;
 
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
+import pl.vezyr.arkanoidgwt.client.data.config.TechnicalConfig;
 
 /**
  * An interface for game's config containing classes.
@@ -38,4 +39,10 @@ public interface ConfigManager {
 	 * @throws DifficultyLevelNotFound if there is no difficulty config for given name. 
 	 */
 	public DifficultyLevel getDifficultyLevel(String levelName);
+	
+	/**
+	 * Gets technical config.
+	 * @return TechnicalConfig
+	 */
+	public TechnicalConfig getTechnicalConfig();
 }

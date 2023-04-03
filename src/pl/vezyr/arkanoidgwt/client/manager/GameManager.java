@@ -1,10 +1,24 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.Logger;
 
-import pl.vezyr.arkanoidgwt.client.manager.input.GameplayInputManager;
+import com.google.gwt.animation.client.AnimationScheduler;
+import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
+import com.google.gwt.dom.client.NativeEvent;
+
+import pl.vezyr.arkanoidgwt.client.event.ArkanoidGwtEvent;
+import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
+import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
+import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
+import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
+import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
+import pl.vezyr.arkanoidgwt.client.view.ui.MainMenuUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
 
 /**
@@ -19,6 +33,7 @@ public class GameManager {
 	private GameState state = null;
 	
 	private static GameplayManager gameplayManager;
+	private static MainMenuManager mainMenuManager;
 	
 	private static CanvasManager canvasManager;
 	private static InputManager inputManager;
@@ -26,15 +41,53 @@ public class GameManager {
 	private static SceneManager sceneManager;
 	private static ConfigManager configManager;
 	
+	private double lastFrameTimestamp = 0;
+	
+	private static final Queue<ArkanoidGwtEvent> eventsQueue = new LinkedList<ArkanoidGwtEvent>();
+	
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
 	public GameManager() {
-		state = GameState.MAIN_MENU;
-		canvasManager = new CanvasManager();
-		gameplayManager = new GameplayManager(canvasManager);
 		configManager = new SimpleInMemeoryConfigManager();
 		configManager.load();
+		
+		canvasManager = new CanvasManager();
+		gameplayManager = new GameplayManager(canvasManager);
+		mainMenuManager = new MainMenuManager();
+		
+		onStateChangeToMainMenu();
+		state = GameState.MAIN_MENU;
+		
 		logger.info("Game Manager constructed.");
+	}
+	
+	/**
+	 * Entry point of the game.
+	 * Initialize any additional objects and run main game loop.
+	 */
+	public void run() {
+		// Animation callback used as game loop to sync
+		// frame rate with platform.
+		AnimationCallback gameLoop = new AnimationCallback() {
+			
+			@Override
+			public void execute(double timestamp) {
+				double deltaTime = timestamp - lastFrameTimestamp;
+				
+				inputManager.processInput();
+				notifyAllInputHandlers();
+				handleEventsQueue();
+				sceneManager.update(deltaTime);
+				sceneManager.redraw();
+				
+				lastFrameTimestamp = timestamp;
+				if (state != GameState.QUIT_GAME) {
+					AnimationScheduler.get().requestAnimationFrame(this);
+				}
+			}
+		};
+		
+		 AnimationScheduler.get().requestAnimationFrame(gameLoop);
 	}
 	
 	/**
@@ -53,6 +106,9 @@ public class GameManager {
 				if(newState == GameState.GAMEPLAY) {
 					onStateChangeToGameplay();
 					state = newState;
+				} else if (newState == GameState.QUIT_GAME) {
+					onStateChangeToQuitGame();
+					state = newState;
 				}
 			break;
 			case GAMEPLAY:
@@ -69,7 +125,7 @@ public class GameManager {
 	 */
 	private void onStateChangeToGameplay() {
 		canvasManager.loadCanvasFor(GameState.GAMEPLAY);
-		inputManager = new GameplayInputManager(canvasManager.getCurrentLoadedCanvas());
+		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
 		uiManager = new GameplayUiManager(canvasManager.getCurrentLoadedCanvas());
 		sceneManager = gameplayManager;
 		gameplayManager.run();
@@ -79,7 +135,68 @@ public class GameManager {
 	 * Action to perform when loading MainMenu state.
 	 */
 	private void onStateChangeToMainMenu() {
-		
+		canvasManager.loadCanvasFor(GameState.MAIN_MENU);
+		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
+		uiManager = new MainMenuUiManager();
+		sceneManager = mainMenuManager;
+		mainMenuManager.run();
+	}
+	
+	/**
+	 * Action to perform when quiting game.
+	 */
+	private void onStateChangeToQuitGame() {
+		canvasManager.unloadAllFromCanvasContainer();
+	}
+	
+	/**
+	 * Handles the queued events.
+	 * Dequeue all events and take action on each.
+	 */
+	private void handleEventsQueue() {
+		ArkanoidGwtEvent event = eventsQueue.poll();
+		while (event != null) {
+			if (event instanceof NewGameButtonClickEvent) {
+				changeState(GameState.GAMEPLAY);
+			} else if (event instanceof QuitGameButtonClickEvent) {
+				changeState(GameState.QUIT_GAME);
+			}
+			event = eventsQueue.poll();
+		}
+	}
+	
+	/**
+	 * Notify all input handlers register in the UiElementsRegister
+	 * about the processed input.
+	 * @see pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler
+	 * @see pl.vezyr.arkanoidgwt.client.register.ObjectsRegister
+	 */
+	private void notifyAllInputHandlers() {
+		for (Object elem : ObjectsRegister.getActiveReferences()) {
+			// Notify only if mouse state changed.
+			// It's prevent state mismatch if player doesn't use mouse
+			// and operate only by keyboard
+			if (inputManager.hasMouseMoved() ||
+				inputManager.isButtonJustPressed(NativeEvent.BUTTON_LEFT) || 
+				inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)) {
+				
+				if (elem instanceof MouseInputHandler) {
+					((MouseInputHandler)elem).handleMouseInput(
+						inputManager.getMousePosition(),
+						inputManager.isMouseButtonPressed(NativeEvent.BUTTON_LEFT),
+						inputManager.isButtonJustReleased(NativeEvent.BUTTON_LEFT)
+					);
+				}
+				
+			}
+			
+			if (elem instanceof KeyboardInputHandler) {
+				((KeyboardInputHandler)elem).handleKeyboardInput(
+					inputManager.getAllPressedKeys(),
+					inputManager.getLastReleasedKey()
+				);
+			}
+		}
 	}
 	
 	/**
@@ -120,5 +237,14 @@ public class GameManager {
 	 */
 	public static ConfigManager getConfigManager() {
 		return configManager;
+	}
+	
+	/**
+	 * Dispatch event - add event to queue to be 
+	 * processed on next frame.
+	 * @param event Event to queue.
+	 */
+	public static void dispatchEvent(ArkanoidGwtEvent event) {
+		eventsQueue.add(event);
 	}
 }
