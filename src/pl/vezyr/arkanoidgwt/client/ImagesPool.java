@@ -15,26 +15,38 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class ImagesPool {
 
-	public static final String IMAGE_BALL = "ball";
-	public static final String IMAGE_PADDLE = "paddle";
-	public static final String IMAGE_BLOCK_WEAK = "block_weak";
-	public static final String IMAGE_BLOCK_MEDIUM_NORMAL = "block_medium_normal";
-	public static final String IMAGE_BLOCK_MEDIUM_DAMAGED = "block_medium_damaged";
-	public static final String IMAGE_BLOCK_STRONG_NORMAL = "block_strong_normal";
-	public static final String IMAGE_BLOCK_STRONG_LIGHT_DAMAGE = "block_strong_light_damage";
-	public static final String IMAGE_BLOCK_STRONG_HEAVY_DAMAGE = "block_strong_heavy_damage";
-	public static final String IMAGE_BACKGROUND_GAMEPLAY = "background_gameplay";
+	public static final String IMAGE_BALL 							= 	"ball";
+	public static final String IMAGE_PADDLE 						= 	"paddle";
+	public static final String IMAGE_BLOCK_WEAK 					= 	"block_weak";
+	public static final String IMAGE_BLOCK_MEDIUM_NORMAL 			= 	"block_medium_normal";
+	public static final String IMAGE_BLOCK_MEDIUM_DAMAGED 			= 	"block_medium_damaged";
+	public static final String IMAGE_BLOCK_STRONG_NORMAL 			= 	"block_strong_normal";
+	public static final String IMAGE_BLOCK_STRONG_LIGHT_DAMAGE 		= 	"block_strong_light_damage";
+	public static final String IMAGE_BLOCK_STRONG_HEAVY_DAMAGE 		= 	"block_strong_heavy_damage";
+	public static final String IMAGE_BACKGROUND_GAMEPLAY 			= 	"background_gameplay";
 	
-	public static final String UI_BUTTON_BLUE_NORMAL = "ui_button_blue_normal";
-	public static final String UI_BUTTON_YELLOW_NORMAL = "ui_button_yellow_normal";
-	public static final String UI_BUTTON_YELLOW_PRESSED = "ui_button_yellow_pressed";
+	public static final String UI_BUTTON_BLUE_NORMAL 				= 	"ui_button_blue_normal";
+	public static final String UI_BUTTON_YELLOW_NORMAL 				= 	"ui_button_yellow_normal";
+	public static final String UI_BUTTON_YELLOW_PRESSED 			= 	"ui_button_yellow_pressed";
 	
-	public static final String UI_GAMEPLAY_TOP_BG = "ui_gameplay_top_bg";
-	public static final String UI_GAMEPLAY_HEART_STROKED = "ui_gameplay_heart_stroked";
-	public static final String UI_GAMEPLAY_HEART_FILLED = "ui_gameplay_heart_filled";
-	public static final String UI_GAMEPLAY_POPUP_BG = "ui_gameplay_popup_bg";
+	public static final String UI_GAMEPLAY_TOP_BG 					= 	"ui_gameplay_top_bg";
+	public static final String UI_GAMEPLAY_HEART_STROKED 			= 	"ui_gameplay_heart_stroked";
+	public static final String UI_GAMEPLAY_HEART_FILLED 			= 	"ui_gameplay_heart_filled";
+	public static final String UI_GAMEPLAY_POPUP_BG 				= 	"ui_gameplay_popup_bg";
 	
-	private static final String IMAGES_CONTAINER_NAME = "images_container";
+	public static final String UI_GAMEPLAY_POPUP_GREY_TOP_LEFT 		= 	"ui_gameplay_popup_grey_top_left";
+	public static final String UI_GAMEPLAY_POPUP_GREY_TOP 			= 	"ui_gameplay_popup_grey_top";
+	public static final String UI_GAMEPLAY_POPUP_GREY_TOP_RIGHT 	= 	"ui_gameplay_popup_grey_top_right";
+	public static final String UI_GAMEPLAY_POPUP_GREY_LEFT 			= 	"ui_gameplay_popup_grey_left";
+	public static final String UI_GAMEPLAY_POPUP_GREY_FILL 			= 	"ui_gameplay_popup_grey_fill";
+	public static final String UI_GAMEPLAY_POPUP_GREY_RIGHT 		= 	"ui_gameplay_popup_grey_right";
+	public static final String UI_GAMEPLAY_POPUP_GREY_BOTTOM_LEFT 	= 	"ui_gameplay_popup_grey_bottom_left";
+	public static final String UI_GAMEPLAY_POPUP_GREY_BOTTOM 		= 	"ui_gameplay_popup_grey_bottom";
+	public static final String UI_GAMEPLAY_POPUP_GREY_BOTTOM_RIGHT 	= 	"ui_gameplay_popup_grey_bottom_right";
+	
+	public static final String UI_BLEND								= 	"ui_blend";
+	
+	private static final String IMAGES_CONTAINER_NAME 			= 	"images_container";
 	
 	private static Map<String, Image> images = new HashMap<String, Image>();
 	
@@ -65,6 +77,16 @@ public class ImagesPool {
 		images.put(UI_GAMEPLAY_HEART_STROKED, new Image("images/ui/heart_stroked.png"));
 		images.put(UI_GAMEPLAY_HEART_FILLED, new Image("images/ui/heart_filled.png"));
 		images.put(UI_GAMEPLAY_POPUP_BG, new Image("images/ui/gameplay_popup.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_TOP_LEFT, new Image("images/ui/panel_grey/panel_grey_top_left.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_TOP, new Image("images/ui/panel_grey/panel_grey_top.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_TOP_RIGHT, new Image("images/ui/panel_grey/panel_grey_top_right.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_LEFT, new Image("images/ui/panel_grey/panel_grey_left.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_FILL, new Image("images/ui/panel_grey/panel_grey_fill.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_RIGHT, new Image("images/ui/panel_grey/panel_grey_right.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_BOTTOM_LEFT, new Image("images/ui/panel_grey/panel_grey_bottom_left.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_BOTTOM, new Image("images/ui/panel_grey/panel_grey_bottom.png"));
+		images.put(UI_GAMEPLAY_POPUP_GREY_BOTTOM_RIGHT, new Image("images/ui/panel_grey/panel_grey_bottom_right.png"));
+		images.put(UI_BLEND, new Image("images/ui/blend.png"));
 		
 		images.forEach((String key, Image value) -> {
 			value.setVisible(false);

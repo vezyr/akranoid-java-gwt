@@ -14,4 +14,8 @@ public interface Registrable {
 	 */
 	public void register();
 	
+	/**
+	 * Unregister this object.
+	 */
+	public void unregister();
 }

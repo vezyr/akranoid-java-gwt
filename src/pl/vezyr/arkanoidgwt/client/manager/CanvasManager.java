@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.GameplayCanvasWrapper;
 import pl.vezyr.arkanoidgwt.client.view.MainMenuCanvasWrapper;
@@ -37,11 +38,13 @@ public class CanvasManager {
 	public void loadCanvasFor(GameState gameState) {
 		switch(gameState) {
 			case MAIN_MENU:
+				ObjectsRegister.unregisterAll();
 				unloadAllFromCanvasContainer();
 				mainMenuCanvas.load();
 				currentLoadedCanvas = mainMenuCanvas;
 			break;
 			case GAMEPLAY:
+				ObjectsRegister.unregisterAll();
 				unloadAllFromCanvasContainer();
 				gameplayCanvas.load();
 				currentLoadedCanvas = gameplayCanvas;

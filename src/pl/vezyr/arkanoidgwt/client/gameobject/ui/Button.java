@@ -2,13 +2,14 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 
 import pl.vezyr.arkanoidgwt.client.UiConsts;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
+import pl.vezyr.arkanoidgwt.client.gameobject.component.TextComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
@@ -19,12 +20,14 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 
 	private Map<ButtonState, ButtonStateData> buttonStatesData;
 	private ButtonState state;
-	private String textOnButton;
+	
 	private ImageComponent image;
+	private TextComponent textComponent;
+	
+	private static final Logger logger = Logger.getLogger(Button.class.getName());
 	
 	public Button(Vector2<Integer> position, ButtonStateData normalStateData, ButtonStateData hoverStateData, ButtonStateData pressedStateData, String textOnButton) {
 		super(position, new Vector2<Integer>(normalStateData.getImage().getWidth(), normalStateData.getImage().getHeight()));
-		this.textOnButton = textOnButton;
 		buttonStatesData = new HashMap<ButtonState, ButtonStateData>(3);
 		buttonStatesData.put(ButtonState.NORMAL, normalStateData);
 		buttonStatesData.put(ButtonState.HOVER, hoverStateData);
@@ -32,6 +35,14 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 		state = ButtonState.NORMAL;
 		
 		image = new ImageComponent(this, normalStateData.getImage());
+		textComponent = new TextComponent(
+				this, 
+				new Vector2<Integer>((getSize().getX() / 2), (getSize().getY() / 2) + 5), 
+				textOnButton, 
+				UiConsts.UI_FONT_SIZE_BASE, 
+				UiConsts.UI_FONT_NAME, 
+				UiConsts.UI_FONT_COLOR_DARK
+		);
 	}
 	
 	@Override
@@ -52,7 +63,11 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	@Override
 	public void handleMouseInput(Vector2<Integer> mousePosition, boolean isLeftButtonPressed,
 			boolean isLeftButtonJustReleased) {
+		if (!isActive()) {
+			return;
+		}
 		if (ViewHelper.isOverUiElement(mousePosition, this)) {
+			//logger.info("Mouse is over " + this + ". Am I active? " + isActive());
 			if (isLeftButtonPressed) {
 				setState(ButtonState.PRESSED);
 			} else {
@@ -72,13 +87,14 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	}
 	
 	@Override
+	public void unregister() {
+		ObjectsRegister.unregister(this);
+	}
+	
+	@Override
 	public void draw(Context2d context) {
 		image.draw(context);
-		context.setTextAlign(TextAlign.CENTER);
-		context.setFont(UiConsts.UI_FONT_NORMAL);
-		context.fillText(textOnButton, 
-				getPosition().getX() + (getSize().getX() / 2), 
-				getPosition().getY() + (getSize().getY() / 2) + 5);
+		textComponent.draw(context);
 	}
 	
 	/**
@@ -105,5 +121,9 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 */
 	public void setSelected(boolean selected) {
 		setState(selected ? ButtonState.HOVER : ButtonState.NORMAL);
+	}
+	
+	protected TextComponent getTextComponent() {
+		return textComponent;
 	}
 }

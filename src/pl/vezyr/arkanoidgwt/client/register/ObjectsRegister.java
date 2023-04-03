@@ -7,10 +7,19 @@ public class ObjectsRegister {
 
 	// It could be better to use WeakReference<UiElement> 
 	// but GWT dosen't support it.
-	private static final Set<Object> references = new HashSet<Object>();
+	private static Set<Object> references = new HashSet<Object>();
 	
 	public static final void register(Object object) {
 		references.add(object);
+	}
+	
+	public static final void unregister(Object object) {
+		references.remove(object);
+	}
+	
+	public static final void unregisterAll() {
+		references.clear();
+		references = new HashSet<Object>();
 	}
 	
 	public static final Set<Object> getActiveReferences() {

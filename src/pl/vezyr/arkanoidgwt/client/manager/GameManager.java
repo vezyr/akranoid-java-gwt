@@ -4,11 +4,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Logger;
 
+import javax.print.attribute.standard.PrinterIsAcceptingJobs;
+
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.dom.client.NativeEvent;
 
 import pl.vezyr.arkanoidgwt.client.event.ArkanoidGwtEvent;
+import pl.vezyr.arkanoidgwt.client.event.LeaveGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
@@ -126,7 +129,7 @@ public class GameManager {
 	private void onStateChangeToGameplay() {
 		canvasManager.loadCanvasFor(GameState.GAMEPLAY);
 		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
-		uiManager = new GameplayUiManager(canvasManager.getCurrentLoadedCanvas());
+		uiManager = canvasManager.getCurrentLoadedCanvas().getUiManager();
 		sceneManager = gameplayManager;
 		gameplayManager.run();
 	}
@@ -137,7 +140,7 @@ public class GameManager {
 	private void onStateChangeToMainMenu() {
 		canvasManager.loadCanvasFor(GameState.MAIN_MENU);
 		inputManager = new GameInputManager(canvasManager.getCurrentLoadedCanvas());
-		uiManager = new MainMenuUiManager();
+		uiManager = canvasManager.getCurrentLoadedCanvas().getUiManager();
 		sceneManager = mainMenuManager;
 		mainMenuManager.run();
 	}
@@ -160,6 +163,8 @@ public class GameManager {
 				changeState(GameState.GAMEPLAY);
 			} else if (event instanceof QuitGameButtonClickEvent) {
 				changeState(GameState.QUIT_GAME);
+			} else if (event instanceof LeaveGameButtonClickEvent) {
+				changeState(GameState.MAIN_MENU);
 			}
 			event = eventsQueue.poll();
 		}

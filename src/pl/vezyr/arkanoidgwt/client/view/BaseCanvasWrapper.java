@@ -48,4 +48,9 @@ public abstract class BaseCanvasWrapper implements CanvasWrapper {
 	public Canvas getCanvas() {
 		return canvas;
 	}
+	
+	@Override
+	public UiManager getUiManager() {
+		return uiManager;
+	}
 }

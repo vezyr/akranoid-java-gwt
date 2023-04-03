@@ -16,7 +16,7 @@ public class SimpleInMemeoryConfigManager extends BaseConfigManager {
 		difficultyLevels.add(new DifficultyLevel(2, "Easy", 5, 5 * 60 * 1000));
 		difficultyLevels.add(new DifficultyLevel(3, "Medium", 6, 4 * 60 * 1000));
 		difficultyLevels.add(new DifficultyLevel(4, "Hard", 7, 3 * 60 * 1000));
-		difficultyLevels.add(new DifficultyLevel(5, "The Hardest", 8, 3 * 60 * 1000));
+		difficultyLevels.add(new DifficultyLevel(5, "The Hardest", 8, 5 * 1000));
 		
 		// Sort on load - just to show how to manage the level's order.
 		difficultyLevels.sort(new Comparator<DifficultyLevel>() {
