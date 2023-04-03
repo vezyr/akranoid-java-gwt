@@ -2,44 +2,36 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
-import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.UiConsts;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
+import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
-import pl.vezyr.arkanoidgwt.client.register.Registrable;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
+import pl.vezyr.arkanoidgwt.client.register.Registrable;
 import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 public class Button extends UiElement implements MouseInputHandler, Registrable {
 
 	private Map<ButtonState, ButtonStateData> buttonStatesData;
 	private ButtonState state;
-	private static final Logger logger = Logger.getLogger(Button.class.getName());
 	private String textOnButton;
+	private ImageComponent image;
 	
 	public Button(Vector2<Integer> position, ButtonStateData normalStateData, ButtonStateData hoverStateData, ButtonStateData pressedStateData, String textOnButton) {
-		super(position, normalStateData.getImage());
+		super(position, new Vector2<Integer>(normalStateData.getImage().getWidth(), normalStateData.getImage().getHeight()));
 		this.textOnButton = textOnButton;
 		buttonStatesData = new HashMap<ButtonState, ButtonStateData>(3);
 		buttonStatesData.put(ButtonState.NORMAL, normalStateData);
 		buttonStatesData.put(ButtonState.HOVER, hoverStateData);
 		buttonStatesData.put(ButtonState.PRESSED, pressedStateData);
 		state = ButtonState.NORMAL;
-				
-	}
-	
-	@Override
-	public Image getImage() {
-		if (buttonStatesData.get(state) == null || buttonStatesData.get(state).getImage() == null) {
-			return buttonStatesData.get(ButtonState.NORMAL).getImage();
-		}
 		
-		return buttonStatesData.get(state).getImage();
+		image = new ImageComponent(this, normalStateData.getImage());
 	}
 	
 	@Override
@@ -81,12 +73,12 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	
 	@Override
 	public void draw(Context2d context) {
-		super.draw(context);
+		image.draw(context);
 		context.setTextAlign(TextAlign.CENTER);
-		context.setFont("20px KenvectorFuture");
+		context.setFont(UiConsts.UI_FONT_NORMAL);
 		context.fillText(textOnButton, 
-				getPosition().getX() + (getImage().getWidth() / 2), 
-				getPosition().getY() + (getImage().getHeight() / 2) + 5);
+				getPosition().getX() + (getSize().getX() / 2), 
+				getPosition().getY() + (getSize().getY() / 2) + 5);
 	}
 	
 	/**
@@ -95,7 +87,6 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 * selected.
 	 */
 	public void onClick() {
-		logger.info("Button clicked");
 	}
 
 	/**
@@ -104,6 +95,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 */
 	public void setState(ButtonState state) {
 		this.state = state;
+		image.setImage(buttonStatesData.get(state).getImage());
 	}
 	
 	/**

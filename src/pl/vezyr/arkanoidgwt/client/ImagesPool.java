@@ -29,6 +29,11 @@ public class ImagesPool {
 	public static final String UI_BUTTON_YELLOW_NORMAL = "ui_button_yellow_normal";
 	public static final String UI_BUTTON_YELLOW_PRESSED = "ui_button_yellow_pressed";
 	
+	public static final String UI_GAMEPLAY_TOP_BG = "ui_gameplay_top_bg";
+	public static final String UI_GAMEPLAY_HEART_STROKED = "ui_gameplay_heart_stroked";
+	public static final String UI_GAMEPLAY_HEART_FILLED = "ui_gameplay_heart_filled";
+	public static final String UI_GAMEPLAY_POPUP_BG = "ui_gameplay_popup_bg";
+	
 	private static final String IMAGES_CONTAINER_NAME = "images_container";
 	
 	private static Map<String, Image> images = new HashMap<String, Image>();
@@ -56,6 +61,10 @@ public class ImagesPool {
 		images.put(UI_BUTTON_BLUE_NORMAL, new Image("images/ui/button_blue_normal.png"));
 		images.put(UI_BUTTON_YELLOW_NORMAL, new Image("images/ui/button_yellow_normal.png"));
 		images.put(UI_BUTTON_YELLOW_PRESSED, new Image("images/ui/button_yellow_pressed.png"));
+		images.put(UI_GAMEPLAY_TOP_BG, new Image("images/ui/gameplay_top_bg.png"));
+		images.put(UI_GAMEPLAY_HEART_STROKED, new Image("images/ui/heart_stroked.png"));
+		images.put(UI_GAMEPLAY_HEART_FILLED, new Image("images/ui/heart_filled.png"));
+		images.put(UI_GAMEPLAY_POPUP_BG, new Image("images/ui/gameplay_popup.png"));
 		
 		images.forEach((String key, Image value) -> {
 			value.setVisible(false);

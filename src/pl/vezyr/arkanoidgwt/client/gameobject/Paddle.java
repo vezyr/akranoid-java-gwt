@@ -1,8 +1,11 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.gameobject.component.Drawable;
+import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.BoxCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
@@ -10,6 +13,7 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResul
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.GameplayManager;
+import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 /**
  * GameObject that represents Paddle.
@@ -22,10 +26,12 @@ import pl.vezyr.arkanoidgwt.client.manager.GameplayManager;
 public class Paddle extends GameObject implements Collidable {
 
 	private BoxCollider collider;
+	private ImageComponent image;
 	
 	public Paddle(Vector2<Integer> position, Image image) {
-		super(position, image);
-		collider = new BoxCollider(this);
+		super(position, new Vector2<Integer>(image.getWidth(), image.getHeight()));
+		this.image = new ImageComponent(this, image);
+		collider = new BoxCollider(this, this.image.getSize());
 	}
 	
 	@Override
@@ -80,5 +86,14 @@ public class Paddle extends GameObject implements Collidable {
 
 	@Override
 	public void handleCollision(CollisionResult collision) {	
+	}
+	
+	@Override
+	public void draw(Context2d context) {
+		image.draw(context);
+	}
+
+	public Image getImage() {
+		return image.getImage();
 	}
 }

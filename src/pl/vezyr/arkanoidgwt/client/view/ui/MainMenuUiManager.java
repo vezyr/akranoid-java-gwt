@@ -3,7 +3,6 @@ package pl.vezyr.arkanoidgwt.client.view.ui;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -26,8 +25,6 @@ public class MainMenuUiManager implements UiManager, KeyboardInputHandler, Regis
 	private int currentSelectedButton;
 	
 	private Map<Integer, Button> selectionToButtonMap;
-	
-	private static final Logger logger = Logger.getLogger(MainMenuUiManager.class.getName());
 	
 	public MainMenuUiManager() {
 		newGameButton = new NewGameButton(new Vector2<Integer>(540, 400));

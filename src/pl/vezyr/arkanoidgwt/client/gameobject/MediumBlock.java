@@ -1,7 +1,5 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
-import com.google.gwt.user.client.ui.Image;
-
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
@@ -11,21 +9,21 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
  * @see pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock
  */
 public class MediumBlock extends BaseBlock {
-
-	private Image imageDamaged;
 	
 	public MediumBlock(Vector2<Integer> position) {
 		super(position, ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_MEDIUM_NORMAL), 2);
-		imageDamaged = ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_MEDIUM_DAMAGED);
 	}
-
+	
 	@Override
-	public Image getImage() {
+	public void takeDamage(int attackStrength) {
+		super.takeDamage(attackStrength);
 		switch(currentHealth()) {
-			case 1: 
-				return imageDamaged;
+			case 1:
+				getImageComponent().setImage(ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_MEDIUM_DAMAGED));
+				break;
 			default:
-				return super.getImage();
+				getImageComponent().setImage(ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_MEDIUM_DAMAGED));
+				break;
 		}
 	}
 }

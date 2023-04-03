@@ -1,8 +1,6 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.user.client.ui.Image;
 
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
@@ -18,11 +16,13 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 public abstract class GameObject {
 
 	private Vector2<Integer> position;
-	private Image image;
+	private Vector2<Integer> size;
+	private boolean active;
 	
-	public GameObject(Vector2<Integer> position, Image image) {
-		this.position = position;
-		this.image = image;
+	public GameObject(Vector2<Integer> position, Vector2<Integer> size) {
+		this.position = new Vector2<Integer>(position);
+		this.size = new Vector2<Integer>(size);
+		active = true;
 	}
 	
 	/**
@@ -32,12 +32,13 @@ public abstract class GameObject {
 	public Vector2<Integer> getPosition() {
 		return position;
 	}
+	
 	/**
-	 * Returns the Image - graphic representation of a Game Object.
-	 * @return Image representation of Game Object.
+	 * Returns the size of Game Object.
+	 * @return Vector2<Integer> Size of Game Object.
 	 */
-	public Image getImage() {
-		return image;
+	public Vector2<Integer> getSize() {
+		return size;
 	}
 	
 	/**
@@ -53,7 +54,24 @@ public abstract class GameObject {
 	 * @param context
 	 */
 	public void draw(Context2d context) {
-		ImageElement imageElement = ImageElement.as(getImage().getElement());
-		context.drawImage(imageElement, getPosition().getX(), getPosition().getY());
+		
+	}
+
+	/**
+	 * Returns if this game object is active.
+	 * Inactive game object won't be drawn event if
+	 * draw() method is called.
+	 * @return boolean True if game object is active, false otherwise.
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * Set active state of game object.
+	 * @param active 
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

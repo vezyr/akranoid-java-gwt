@@ -20,5 +20,6 @@ public class MainMenuCanvasWrapper extends BaseCanvasWrapper {
 	public void load() {
 		RootPanel.get(CanvasManager.CANVAS_CONTAINER_ID).add(canvas);
 		uiManager = new MainMenuUiManager();
+		canvas.setFocus(true);
 	}
 }
