@@ -15,6 +15,8 @@ import pl.vezyr.arkanoidgwt.client.event.LeaveGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
+import pl.vezyr.arkanoidgwt.client.manager.audio.AudioManager;
+import pl.vezyr.arkanoidgwt.client.manager.audio.GameAudioManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
@@ -43,6 +45,7 @@ public class GameManager {
 	private static UiManager uiManager;
 	private static SceneManager sceneManager;
 	private static ConfigManager configManager;
+	private static AudioManager audioManager;
 	
 	private double lastFrameTimestamp = 0;
 	
@@ -57,6 +60,7 @@ public class GameManager {
 		canvasManager = new CanvasManager();
 		gameplayManager = new GameplayManager(canvasManager);
 		mainMenuManager = new MainMenuManager();
+		audioManager = new GameAudioManager();
 		
 		onStateChangeToMainMenu();
 		state = GameState.MAIN_MENU;
@@ -242,6 +246,14 @@ public class GameManager {
 	 */
 	public static ConfigManager getConfigManager() {
 		return configManager;
+	}
+	
+	/**
+	 * Returns currently loaded Audio manager.
+	 * @return AudioManager Loaded Audio manager.
+	 */
+	public static AudioManager getAudioManager() {
+		return audioManager;
 	}
 	
 	/**

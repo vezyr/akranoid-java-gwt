@@ -26,6 +26,7 @@ public class ChooseDifficultyButton extends Button {
 	
 	@Override
 	public void onClick() {
+		super.onClick();
 		if (!(GameManager.getSceneManager() instanceof GameplayManager)) {
 			return;
 		}

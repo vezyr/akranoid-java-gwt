@@ -21,6 +21,7 @@ public class QuitGameButton extends Button {
 
 	@Override
 	public void onClick() {
+		super.onClick();
 		GameManager.dispatchEvent(new QuitGameButtonClickEvent());
 	}
 }

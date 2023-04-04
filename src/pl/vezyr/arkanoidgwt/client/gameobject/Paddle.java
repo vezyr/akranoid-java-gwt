@@ -4,6 +4,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.Drawable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.BoxCollider;
@@ -64,6 +65,8 @@ public class Paddle extends GameObject implements Collidable {
 		if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_LEFT)) {
 			int newPos = this.getPosition().getX() - 5;
 			this.getPosition().setX(newPos > 0 ? newPos : 1);
+			GameManager.getAudioManager().stop(AudioPool.AUDIO_GAMEPLAY_PADDLE_STAYING);
+			GameManager.getAudioManager().playInLoop(AudioPool.AUDIO_GAMEPLAY_PADDLE_MOVING);
 		} else if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_RIGHT)) {
 			int newPos = this.getPosition().getX() + 5;
 			this.getPosition().setX(
@@ -71,11 +74,18 @@ public class Paddle extends GameObject implements Collidable {
 						newPos : 
 						GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()
 			);
+			GameManager.getAudioManager().stop(AudioPool.AUDIO_GAMEPLAY_PADDLE_STAYING);
+			GameManager.getAudioManager().playInLoop(AudioPool.AUDIO_GAMEPLAY_PADDLE_MOVING);
 		} else if (GameManager.getInputManager().hasMouseMoved()) { 
-			if (GameManager.getInputManager().getMousePosition().getX() > 0 && 
-				GameManager.getInputManager().getMousePosition().getX() < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {
+			if (GameManager.getInputManager().getMousePosition().getX() > (getSize().getX() / 2) && 
+				GameManager.getInputManager().getMousePosition().getX() < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - (getSize().getX() / 2)) {
 				this.getPosition().setX(GameManager.getInputManager().getMousePosition().getX() - (getSize().getX() / 2));
+				GameManager.getAudioManager().stop(AudioPool.AUDIO_GAMEPLAY_PADDLE_STAYING);
+				GameManager.getAudioManager().playInLoop(AudioPool.AUDIO_GAMEPLAY_PADDLE_MOVING);
 			}
+		} else {
+			GameManager.getAudioManager().stop(AudioPool.AUDIO_GAMEPLAY_PADDLE_MOVING);
+			GameManager.getAudioManager().playInLoop(AudioPool.AUDIO_GAMEPLAY_PADDLE_STAYING);
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
@@ -135,9 +136,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					case GAME_LOST:
 						state = newState;
 						ObjectsRegister.unregister(this);
+						onStateChangeToGameLost();
 					break;
 					case GAME_WIN:
 						state = newState;
+						onStateChangeToGameWon();
 					break;
 				}
 			break;
@@ -149,9 +152,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					break;
 					case GAME_LOST:
 						state = newState;
+						onStateChangeToGameLost();
 					break;
 					case GAME_WIN:
 						state = newState;
+						onStateChangeToGameWon();
 					break;
 				}
 			break;
@@ -162,6 +167,7 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					break;
 					case GAME_LOST:
 						state = newState;
+						onStateChangeToGameLost();
 					break;
 				}
 			break;
@@ -197,12 +203,21 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	}
 	
 	private void onStateChangeToLostLive() {
+		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_LIVE_LOST);
 		if(playerData.liveLost()) {
 			changeState(GameplayState.READY_TO_START);
 			ObjectsRegister.register(this);
 		} else {
 			changeState(GameplayState.GAME_LOST);
 		}
+	}
+	
+	private void onStateChangeToGameWon() {
+		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_GAME_WON);
+	}
+	
+	private void onStateChangeToGameLost() {
+		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_GAME_LOST);
 	}
 	
 	/**

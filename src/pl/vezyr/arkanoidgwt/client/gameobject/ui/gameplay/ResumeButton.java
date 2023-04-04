@@ -21,6 +21,7 @@ public class ResumeButton extends Button {
 	
 	@Override
 	public void onClick() {
+		super.onClick();
 		if (!(GameManager.getSceneManager() instanceof GameplayManager)) {
 			return;
 		}

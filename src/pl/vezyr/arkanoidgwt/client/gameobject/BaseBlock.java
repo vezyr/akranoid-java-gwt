@@ -3,12 +3,14 @@ package pl.vezyr.arkanoidgwt.client.gameobject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.BoxCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 
 /**
  * Base class of all blocks.
@@ -40,8 +42,8 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 
 	@Override
 	public void takeDamage(int attackStrength) {
-		health.takeDamage(attackStrength);		
-		
+		GameManager.getAudioManager().playAsNewSource(AudioPool.AUDIO_GAMEPLAY_BLOCK_HIT);
+		health.takeDamage(attackStrength);
 	}
 
 	@Override
