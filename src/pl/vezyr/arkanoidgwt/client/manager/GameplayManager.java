@@ -11,6 +11,7 @@ import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
+import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -83,17 +84,22 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 		
 		dynamicObjects = new ArrayList<GameObject>(Arrays.asList(ball, paddle));
 		
-		for (int i = 0; i < 18; i++) {
-			for (int j = 0; j < 5; j++) {
-				Vector2<Integer> pos = new Vector2<Integer>(50 + (i * 64), 60 + (j * 32));
-				BaseBlock blockToAdd;
-				if (j == 0 || j == 4) {
+		LevelDefinition levelDefinition = GameManager.getConfigManager().getLevelDefinition();
+		
+		for (int i = 0; i < levelDefinition.getNumberOfRows(); i++) {
+			BaseBlock blockToAdd;
+			
+			for (int j = 0; j < 18; j++) {
+				Vector2<Integer> pos = new Vector2<Integer>(50 + (j * 64), 60 + (i * 32));
+			
+				if (levelDefinition.getBlockTypeOnRows().get(i) == WeakBlock.class) {
 					blockToAdd = new WeakBlock(pos);
-				} else if (j == 1 || j == 3) {
+				} else if (levelDefinition.getBlockTypeOnRows().get(i) == MediumBlock.class) {
 					blockToAdd = new MediumBlock(pos);
 				} else {
 					blockToAdd = new StrongBlock(pos);
 				}
+				
 				dynamicObjects.add(blockToAdd);
 			}
 		}
@@ -130,6 +136,9 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 						state = newState;
 						ObjectsRegister.unregister(this);
 					break;
+					case GAME_WIN:
+						state = newState;
+					break;
 				}
 			break;
 			case IN_PROGRESS:
@@ -139,6 +148,9 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 						onStateChangeToLostLive();
 					break;
 					case GAME_LOST:
+						state = newState;
+					break;
+					case GAME_WIN:
 						state = newState;
 					break;
 				}
@@ -154,7 +166,10 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 				}
 			break;
 			case GAME_WIN:
-				
+				if (newState == GameplayState.READY_TO_START) {
+					state = newState;
+					onStateChangeToReadyToStart();
+				}
 			break;
 			case GAME_LOST:
 				if (newState == GameplayState.READY_TO_START) {
@@ -190,6 +205,19 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 		}
 	}
 	
+	/**
+	 * Checks condition if game won (all blocks destroyed).
+	 */
+	private void checkWinCondition() {
+		int numberOfBlocks = 0;
+		for(GameObject obj : dynamicObjects) {
+			if (obj instanceof BaseBlock) numberOfBlocks++;
+		}
+		if (numberOfBlocks == 0) {
+			changeState(GameplayState.GAME_WIN);
+		}
+	}
+	
 	@Override
 	public void update(double deltaTime) {
 		
@@ -211,6 +239,8 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 			dynamicObjects.forEach(dynamicObj -> dynamicObj.update(deltaTime));
 			
 			checkCollisions();
+			
+			checkWinCondition();
 		}
 	}
 	

@@ -17,6 +17,7 @@ import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.ChooseDifficultyButton
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.LifeIndicator;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.Timer;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.YouLostPopup;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.YouWonPopup;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.GameplayState;
@@ -36,6 +37,7 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 	private LifeIndicator lifesIndicator;
 	private Timer timer;
 	private YouLostPopup youLostPopup;
+	private YouWonPopup youWonPopup;
 	private List<ChooseDifficultyButton> difficultyButtons;
 	
 	private int currentSelectedButton;
@@ -46,6 +48,10 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 		
 		lifesIndicator = new LifeIndicator(new Vector2<Integer>(30, canvas.getCanvas().getCoordinateSpaceHeight() - 50));
 		youLostPopup = new YouLostPopup(new Vector2<Integer>(
+				canvas.getCanvas().getCoordinateSpaceWidth() / 2, 
+				canvas.getCanvas().getCoordinateSpaceHeight() / 2
+		));
+		youWonPopup = new YouWonPopup(new Vector2<Integer>(
 				canvas.getCanvas().getCoordinateSpaceWidth() / 2, 
 				canvas.getCanvas().getCoordinateSpaceHeight() / 2
 		));
@@ -79,6 +85,7 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 		allElements.add(lifesIndicator);
 		allElements.add(timer);
 		allElements.add(youLostPopup);
+		allElements.add(youWonPopup);
 		allElements.addAll(difficultyButtons);
 		
 		if (this instanceof Registrable) {
@@ -103,7 +110,9 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 		} else {
 			difficultyButtons.forEach(button -> button.setActive(true));
 		}
-		if (gameplayUiData.getState() == GameplayState.GAME_LOST) {
+		if (gameplayUiData.getState() == GameplayState.GAME_WIN) {
+			youWonPopup.setActive(true);
+		} else if (gameplayUiData.getState() == GameplayState.GAME_LOST) {
 			youLostPopup.setActive(true);
 		}
 	}
@@ -125,7 +134,7 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 
 	@Override
 	public void handleKeyboardInput(Set<Integer> pressedKeys, int justReleasedKey) {
-		currentSelectedButton = ViewHelper.handleKeyboardInputOnVerticalMenu(justReleasedKey, currentSelectedButton, selectionToButtonMap);		
+		currentSelectedButton = ViewHelper.handleKeyboardInputOnVerticalMenu(justReleasedKey, currentSelectedButton, selectionToButtonMap);
 	}
 	
 	/**

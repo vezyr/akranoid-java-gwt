@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
+import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.data.config.TechnicalConfig;
 import pl.vezyr.arkanoidgwt.client.exception.DifficultyLevelNotFound;
 
@@ -11,6 +12,7 @@ public abstract class BaseConfigManager implements ConfigManager {
 
 	protected List<DifficultyLevel> difficultyLevels;
 	protected TechnicalConfig technicalConfig;
+	protected LevelDefinition levelDefinition;
 	
 	public BaseConfigManager() {
 		difficultyLevels = new ArrayList<DifficultyLevel>();
@@ -47,5 +49,10 @@ public abstract class BaseConfigManager implements ConfigManager {
 	@Override
 	public TechnicalConfig getTechnicalConfig() {
 		return technicalConfig;
+	}
+	
+	@Override
+	public LevelDefinition getLevelDefinition() {
+		return levelDefinition;
 	}
 }

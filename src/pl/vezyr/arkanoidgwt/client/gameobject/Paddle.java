@@ -74,7 +74,7 @@ public class Paddle extends GameObject implements Collidable {
 		} else if (GameManager.getInputManager().hasMouseMoved()) { 
 			if (GameManager.getInputManager().getMousePosition().getX() > 0 && 
 				GameManager.getInputManager().getMousePosition().getX() < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {
-				this.getPosition().setX(GameManager.getInputManager().getMousePosition().getX());
+				this.getPosition().setX(GameManager.getInputManager().getMousePosition().getX() - (getSize().getX() / 2));
 			}
 		}
 	}

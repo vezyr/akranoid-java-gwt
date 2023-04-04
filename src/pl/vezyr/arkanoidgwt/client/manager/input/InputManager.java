@@ -32,6 +32,13 @@ public interface InputManager {
 	public boolean hasMouseMoved();
 	
 	/**
+	 * Returns the delta between last mouse position and
+	 * current position.
+	 * @return Vector2<Integer> Delta between last and current positions.
+	 */
+	public Vector2<Integer> getMousePositionDelta();
+	
+	/**
 	 * Checks if mouse button is currently pressed (down).
 	 * @param button Button's code.
 	 * @return boolean True if button is pressed, false otherwise.
