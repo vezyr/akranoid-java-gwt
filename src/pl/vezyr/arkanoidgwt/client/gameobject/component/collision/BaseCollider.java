@@ -27,10 +27,10 @@ public class BaseCollider extends BaseComponent implements Collider {
 	private final Vector2<Float> halfOfSize;
 	private Vector2<Float> center;
 	
-	public BaseCollider(GameObject gameObject) {
+	public BaseCollider(GameObject gameObject, Vector2<Integer> size) {
 		super(gameObject);
 		leftUpCorner = gameObject.getPosition();
-		size = new Vector2<Integer>(gameObject.getImage().getWidth(), gameObject.getImage().getHeight());
+		this.size = size; 
 		halfOfSize = new Vector2<Float>((float)size.getX() / 2, (float)size.getY()/2);
 	}
 	

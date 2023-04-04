@@ -1,7 +1,5 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
-import com.google.gwt.user.client.ui.Image;
-
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
@@ -11,25 +9,24 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
  * @see pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock
  */
 public class StrongBlock extends BaseBlock {
-
-	private Image imageLightDamage;
-	private Image imageHeavyDamage;
 	
 	public StrongBlock(Vector2<Integer> position) {
 		super(position, ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_NORMAL), 3);
-		imageLightDamage = ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_LIGHT_DAMAGE);
-		imageHeavyDamage = ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_HEAVY_DAMAGE);
 	}
-
+	
 	@Override
-	public Image getImage() {
+	public void takeDamage(int attackStrength) {
+		super.takeDamage(attackStrength);
 		switch(currentHealth()) {
-			case 1: 
-				return imageHeavyDamage;
+			case 1:
+				getImageComponent().setImage(ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_HEAVY_DAMAGE));
+				break;
 			case 2:
-				return imageLightDamage;
+				getImageComponent().setImage(ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_LIGHT_DAMAGE));
+				break;
 			default:
-				return super.getImage();
+				getImageComponent().setImage(ImagesPool.getImage(ImagesPool.IMAGE_BLOCK_STRONG_NORMAL));
+				break;
 		}
 	}
 }

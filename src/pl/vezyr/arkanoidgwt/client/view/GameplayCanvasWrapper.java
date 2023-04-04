@@ -23,5 +23,6 @@ public class GameplayCanvasWrapper extends BaseCanvasWrapper {
 	public void load() {
 		RootPanel.get(CanvasManager.CANVAS_CONTAINER_ID).add(canvas);
 		uiManager = new GameplayUiManager(this);
+		canvas.setFocus(true);
 	}	
 }

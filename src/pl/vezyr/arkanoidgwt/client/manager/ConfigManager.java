@@ -3,6 +3,7 @@ package pl.vezyr.arkanoidgwt.client.manager;
 import java.util.List;
 
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
+import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.data.config.TechnicalConfig;
 
 /**
@@ -45,4 +46,10 @@ public interface ConfigManager {
 	 * @return TechnicalConfig
 	 */
 	public TechnicalConfig getTechnicalConfig();
+	
+	/**
+	 * Gets level definition.
+	 * @return LevelDefinition
+	 */
+	public LevelDefinition getLevelDefinition();
 }

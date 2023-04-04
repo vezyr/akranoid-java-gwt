@@ -1,7 +1,9 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.BoxCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
@@ -22,11 +24,13 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 
 	private BoxCollider collider;
 	private HealthComponent health;
+	private ImageComponent image;
 	
 	public BaseBlock(Vector2<Integer> position, Image image, int initialHealth) {
-		super(position, image);
+		super(position, new Vector2<Integer>(image.getWidth(), image.getHeight()));
+		this.image = new ImageComponent(this, image);
 		health = new HealthComponent(this, initialHealth);
-		collider = new BoxCollider(this);
+		collider = new BoxCollider(this, this.image.getSize());
 	}
 
 	@Override
@@ -57,5 +61,14 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 	
 	@Override
 	public void handleCollision(CollisionResult collision) {
+	}
+	
+	@Override
+	public void draw(Context2d context) {
+		image.draw(context);
+	}
+	
+	protected ImageComponent getImageComponent() {
+		return image;
 	}
 }

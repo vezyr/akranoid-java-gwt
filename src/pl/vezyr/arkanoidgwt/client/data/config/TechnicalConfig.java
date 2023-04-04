@@ -2,6 +2,11 @@ package pl.vezyr.arkanoidgwt.client.data.config;
 
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
+/**
+ * Data container class for technical config (ie. screen resolution).
+ * @author vezyr
+ *
+ */
 public class TechnicalConfig {
 
 	private final Vector2<Integer> screenResolution;

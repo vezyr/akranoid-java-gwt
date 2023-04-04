@@ -1,7 +1,9 @@
 package pl.vezyr.arkanoidgwt.client.gameobject;
 
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CircleCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collider;
@@ -23,11 +25,13 @@ public class Ball extends GameObject implements Collidable {
 
 	private Vector2<Float> direction;
 	private CircleCollider collider;
+	private ImageComponent image;
 	
 	public Ball(Vector2<Integer> position, Image image) {
-		super(position, image);
+		super(position, new Vector2<Integer>(image.getWidth(), image.getHeight()));
+		this.image = new ImageComponent(this, image);
 		direction = new Vector2<Float>();
-		collider = new CircleCollider(this);
+		collider = new CircleCollider(this, this.image.getSize(), this.image.getWidth() / 2);
 	}
 
 	/**
@@ -74,6 +78,11 @@ public class Ball extends GameObject implements Collidable {
 				handleOnInProgress(gameplayManager);
 			break;
 		}
+	}
+	
+	@Override
+	public void draw(Context2d context) {
+		image.draw(context);
 	}
 	
 	private void handleOnReadyToStart(GameplayManager gameplayManager) {
@@ -144,10 +153,14 @@ public class Ball extends GameObject implements Collidable {
 		
 		getPosition().set((int)(getPosition().getX() + (correctionDistance * getDirection().getX())), (int)(getPosition().getY() + (correctionDistance * getDirection().getY())));
 		
-		if (hitPoint.getX() == (float)block.getPosition().getX() || hitPoint.getX() == (float)block.getPosition().getX() + block.getImage().getWidth()) {
+		if (hitPoint.getX() == (float)block.getPosition().getX() || hitPoint.getX() == (float)block.getPosition().getX() + block.getSize().getX()) {
 			getDirection().setX(getDirection().getX() * -1);
-		} else if (hitPoint.getY() == (float)block.getPosition().getY() || hitPoint.getY() == (float)block.getPosition().getY() + block.getImage().getHeight()) {
+		} else if (hitPoint.getY() == (float)block.getPosition().getY() || hitPoint.getY() == (float)block.getPosition().getY() + block.getSize().getY()) {
 			getDirection().setY(getDirection().getY() * -1);
 		}
+	}
+
+	public Image getImage() {
+		return image.getImage();
 	}
 }

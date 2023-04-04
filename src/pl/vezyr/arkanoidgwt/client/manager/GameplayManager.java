@@ -11,6 +11,7 @@ import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
+import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -25,6 +26,8 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
+import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 
 /**
  * Main gameplay manager.
@@ -35,7 +38,7 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
  * @author vezyr
  * @see pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker
  */
-public class GameplayManager implements SceneManager, CollisionChecker {
+public class GameplayManager implements SceneManager, CollisionChecker, MouseInputHandler {
 	
 	private CanvasManager canvasManager;
 	
@@ -66,12 +69,13 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	 */
 	public void run() {
 		GameManager.getInputManager().registerHandlers();
-		difficulty = GameManager.getConfigManager().getDifficutlyLevel(5);
+		if (dynamicObjects != null) {
+			dynamicObjects.clear();
+		}
 		
-		resetState();
-		
+		playerData = new PlayerData();
 		uiData = new GameplayUiData();
-		state = GameplayState.READY_TO_START;
+		state = GameplayState.CHOOSE_DIFFICULTY;
 	}
 	
 	private void resetState() {
@@ -80,24 +84,29 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		
 		dynamicObjects = new ArrayList<GameObject>(Arrays.asList(ball, paddle));
 		
-		for (int i = 0; i < 18; i++) {
-			for (int j = 0; j < 5; j++) {
-				Vector2<Integer> pos = new Vector2<Integer>(50 + (i * 64), 60 + (j * 32));
-				BaseBlock blockToAdd;
-				if (j == 0 || j == 4) {
+		LevelDefinition levelDefinition = GameManager.getConfigManager().getLevelDefinition();
+		
+		for (int i = 0; i < levelDefinition.getNumberOfRows(); i++) {
+			BaseBlock blockToAdd;
+			
+			for (int j = 0; j < 18; j++) {
+				Vector2<Integer> pos = new Vector2<Integer>(50 + (j * 64), 60 + (i * 32));
+			
+				if (levelDefinition.getBlockTypeOnRows().get(i) == WeakBlock.class) {
 					blockToAdd = new WeakBlock(pos);
-				} else if (j == 1 || j == 3) {
+				} else if (levelDefinition.getBlockTypeOnRows().get(i) == MediumBlock.class) {
 					blockToAdd = new MediumBlock(pos);
 				} else {
 					blockToAdd = new StrongBlock(pos);
 				}
+				
 				dynamicObjects.add(blockToAdd);
 			}
 		}
 		
 		gameStartTimestamp = (new Date()).getTime();
 		remainingTime = difficulty.getTimeLimit();
-		playerData = new PlayerData();		
+		playerData = new PlayerData();
 	}
 	
 	/**
@@ -112,6 +121,11 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		}
 		
 		switch(state) {
+			case CHOOSE_DIFFICULTY:
+				if (newState == GameplayState.READY_TO_START) {
+					state = newState;
+					onStateChangeToReadyToStart();
+				}
 			case READY_TO_START:
 				switch (newState) {
 					case IN_PROGRESS:
@@ -119,6 +133,10 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 						onStateChangeToInProgress();
 					break;
 					case GAME_LOST:
+						state = newState;
+						ObjectsRegister.unregister(this);
+					break;
+					case GAME_WIN:
 						state = newState;
 					break;
 				}
@@ -130,6 +148,9 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 						onStateChangeToLostLive();
 					break;
 					case GAME_LOST:
+						state = newState;
+					break;
+					case GAME_WIN:
 						state = newState;
 					break;
 				}
@@ -145,15 +166,23 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 				}
 			break;
 			case GAME_WIN:
-				
+				if (newState == GameplayState.READY_TO_START) {
+					state = newState;
+					onStateChangeToReadyToStart();
+				}
 			break;
 			case GAME_LOST:
 				if (newState == GameplayState.READY_TO_START) {
 					state = newState;
-					resetState();
+					onStateChangeToReadyToStart();
 				}
 			break;
 		}
+	}
+	
+	private void onStateChangeToReadyToStart() {
+		ObjectsRegister.register(this);
+		resetState();
 	}
 	
 	private void onStateChangeToInProgress() {
@@ -164,39 +193,55 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 			xAngle = (float)Math.sin(Math.toRadians(45));
 		}
 		ball.getDirection().set(xAngle, (float)Math.sin(Math.toRadians(-45)));
+		ObjectsRegister.unregister(this);
 	}
 	
 	private void onStateChangeToLostLive() {
 		if(playerData.liveLost()) {
 			changeState(GameplayState.READY_TO_START);
+			ObjectsRegister.register(this);
 		} else {
 			changeState(GameplayState.GAME_LOST);
 		}
 	}
 	
+	/**
+	 * Checks condition if game won (all blocks destroyed).
+	 */
+	private void checkWinCondition() {
+		int numberOfBlocks = 0;
+		for(GameObject obj : dynamicObjects) {
+			if (obj instanceof BaseBlock) numberOfBlocks++;
+		}
+		if (numberOfBlocks == 0) {
+			changeState(GameplayState.GAME_WIN);
+		}
+	}
+	
 	@Override
 	public void update(double deltaTime) {
-		if (remainingTime < 0) {
-			changeState(GameplayState.GAME_LOST);
-		} else {
-			remainingTime -= deltaTime;
-		}
 		
-		if (state == GameplayState.READY_TO_START) {
-			if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_SPACE)) {
+		if (state == GameplayState.CHOOSE_DIFFICULTY) {
+			
+		} else if (state == GameplayState.READY_TO_START || state == GameplayState.IN_PROGRESS) {
+			if (state == GameplayState.READY_TO_START && GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_SPACE)) {
 				changeState(GameplayState.IN_PROGRESS);
 			}
-		} else if (state == GameplayState.GAME_LOST) {
-			if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_R)) {
-				changeState(GameplayState.READY_TO_START);
+			
+			if (remainingTime < 0) {
+				changeState(GameplayState.GAME_LOST);
+			} else {
+				remainingTime -= deltaTime;
 			}
+			
+			paddle.update(deltaTime);
+			ball.update(deltaTime);
+			dynamicObjects.forEach(dynamicObj -> dynamicObj.update(deltaTime));
+			
+			checkCollisions();
+			
+			checkWinCondition();
 		}
-		
-		paddle.update(deltaTime);
-		ball.update(deltaTime);
-		dynamicObjects.forEach(dynamicObj -> dynamicObj.update(deltaTime));
-		
-		checkCollisions();
 	}
 	
 	@Override
@@ -260,6 +305,23 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 		return new CollisionResult(collision, collision ? pointOnRectClosestToBall : null, collision ? rect : null);
 	}
 	
+	@Override
+	public void handleMouseInput(Vector2<Integer> mousePosition, boolean isLeftButtonPressed,
+			boolean isLeftButtonJustReleased) {
+		if (state == GameplayState.READY_TO_START && isLeftButtonJustReleased) {
+			changeState(GameplayState.IN_PROGRESS);
+		}
+	}
+	
+	public void chooseDifficulty(DifficultyLevel level) {
+		setDifficutlyLevel(level);
+		changeState(GameplayState.READY_TO_START);
+	}
+	
+	public void restart() {
+		changeState(GameplayState.READY_TO_START);
+	}
+	
 	public GameplayState getState() {
 		return state;
 	}
@@ -270,5 +332,9 @@ public class GameplayManager implements SceneManager, CollisionChecker {
 	
 	public DifficultyLevel getDifficulty() {
 		return difficulty;
+	}
+	
+	public void setDifficutlyLevel(DifficultyLevel difficultyLevel) {
+		this.difficulty = difficultyLevel;
 	}
 }

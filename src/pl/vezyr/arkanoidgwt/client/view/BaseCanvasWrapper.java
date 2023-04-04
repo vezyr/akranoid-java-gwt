@@ -37,9 +37,9 @@ public abstract class BaseCanvasWrapper implements CanvasWrapper {
 	@Override
 	public void redraw(List<GameObject> dynamicObjects, UiData uiData) {
 		context.clearRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
-		staticObjects.forEach(staticObject -> ViewHelper.drawGameObject(context, staticObject));
+		staticObjects.forEach(staticObject -> staticObject.draw(context));
 		if (dynamicObjects != null) {
-			dynamicObjects.forEach(dynamicObject -> ViewHelper.drawGameObject(context, dynamicObject));
+			dynamicObjects.forEach(dynamicObject -> dynamicObject.draw(context));
 		}
 		uiManager.updateUi(uiData);
 	}
@@ -47,5 +47,10 @@ public abstract class BaseCanvasWrapper implements CanvasWrapper {
 	@Override
 	public Canvas getCanvas() {
 		return canvas;
+	}
+	
+	@Override
+	public UiManager getUiManager() {
+		return uiManager;
 	}
 }

@@ -84,6 +84,11 @@ public class GameInputManager implements InputManager {
 	}
 	
 	@Override
+	public Vector2<Integer> getMousePositionDelta() {
+		return mousePositionDelta;
+	}
+	
+	@Override
 	public boolean isMouseButtonPressed(int button) {
 		return pressedButtons.contains(button);
 	}

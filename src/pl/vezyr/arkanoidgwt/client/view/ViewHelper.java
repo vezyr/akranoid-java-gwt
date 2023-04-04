@@ -1,23 +1,45 @@
 package pl.vezyr.arkanoidgwt.client.view;
 
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.ImageElement;
+import java.util.Map;
 
-import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import com.google.gwt.event.dom.client.KeyCodes;
+
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
-public class ViewHelper {
-
-	public static void drawGameObject(Context2d context, GameObject gameObject) {
-		ImageElement imageElement = ImageElement.as(gameObject.getImage().getElement());
-		context.drawImage(imageElement, gameObject.getPosition().getX(), gameObject.getPosition().getY());
+public class ViewHelper {	
+	public static boolean isOverUiElement(Vector2<Integer> point, UiElement element) {
+		if (!element.isActive())
+			return false;
+		return point.getX() >= element.getPosition().getX() &&
+				point.getX() <= element.getPosition().getX() + element.getSize().getX() &&
+				point.getY() >= element.getPosition().getY() &&
+				point.getY() <= element.getPosition().getY() + element.getSize().getY();
 	}
 	
-	public static boolean isOverUiElement(Vector2<Integer> point, UiElement element) {
-		return point.getX() >= element.getPosition().getX() &&
-				point.getX() <= element.getPosition().getX() + element.getImage().getWidth() &&
-				point.getY() >= element.getPosition().getY() &&
-				point.getY() <= element.getPosition().getY() + element.getImage().getHeight();
+	public static int handleKeyboardInputOnVerticalMenu(int justReleasedKey, int currentSelectedButton, Map<Integer, Button> selectionToButtonMap) {
+		if (justReleasedKey == KeyCodes.KEY_UP) {
+			selectionToButtonMap.values().forEach(button -> button.setSelected(false));
+			if (currentSelectedButton == -1) {
+				currentSelectedButton = 1;
+			}
+			currentSelectedButton--;
+			if (currentSelectedButton < 1) {
+				currentSelectedButton = selectionToButtonMap.size();
+			}
+		} else if (justReleasedKey == KeyCodes.KEY_DOWN) {
+			selectionToButtonMap.values().forEach(button -> button.setSelected(false));
+			if (currentSelectedButton == -1) {
+				currentSelectedButton = selectionToButtonMap.size();
+			}
+			currentSelectedButton++;
+			if (currentSelectedButton > selectionToButtonMap.size()) {
+				currentSelectedButton = 1;
+			}
+		} else if (justReleasedKey == KeyCodes.KEY_ENTER) {
+			selectionToButtonMap.get(currentSelectedButton).onClick();
+		}
+		return currentSelectedButton;
 	}
 }

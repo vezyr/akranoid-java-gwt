@@ -1,6 +1,7 @@
 package pl.vezyr.arkanoidgwt.client.gameobject.component.collision;
 
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
 /**
  * Class representing the collider of box (rectangle) shape.
@@ -9,8 +10,8 @@ import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
  */
 public class BoxCollider extends BaseCollider {
 
-	public BoxCollider(GameObject gameObject) {
-		super(gameObject);
+	public BoxCollider(GameObject gameObject, Vector2<Integer> size) {
+		super(gameObject, size);
 	}
 	
 }
