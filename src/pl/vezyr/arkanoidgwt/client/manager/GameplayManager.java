@@ -13,6 +13,7 @@ import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -203,7 +204,7 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	}
 	
 	private void onStateChangeToLostLive() {
-		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_LIVE_LOST);
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_LIVE_LOST)).fire();
 		if(playerData.liveLost()) {
 			changeState(GameplayState.READY_TO_START);
 			ObjectsRegister.register(this);
@@ -213,11 +214,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	}
 	
 	private void onStateChangeToGameWon() {
-		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_GAME_WON);
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_GAME_WON)).fire();
 	}
 	
 	private void onStateChangeToGameLost() {
-		GameManager.getAudioManager().play(AudioPool.AUDIO_GAMEPLAY_GAME_LOST);
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_GAME_LOST)).fire();
 	}
 	
 	/**

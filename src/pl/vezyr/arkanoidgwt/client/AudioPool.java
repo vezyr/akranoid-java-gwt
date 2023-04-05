@@ -22,8 +22,7 @@ public class AudioPool {
 	public static final String AUDIO_GAMEPLAY_GAME_WON = "gameplay_game_won";
 	public static final String AUDIO_GAMEPLAY_GAME_LOST = "gameplay_game_lost";
 	
-	public static final String AUDIO_GAMEPLAY_PADDLE_STAYING = "gameplay_paddle_staying";
-	public static final String AUDIO_GAMEPLAY_PADDLE_MOVING = "gameplay_paddle_moving";
+	public static final String AUDIO_MUSIC = "audio_music";
 	
 	public static void init() {
 		if (audios.size() > 0) {
@@ -42,7 +41,7 @@ public class AudioPool {
 		audios.put(AUDIO_BUTTON_CLICKED, audio);
 		
 		audio = Audio.createIfSupported();
-		audio.setSrc("audios/gameplay_block_hit.ogg");
+		audio.setSrc("audios/gameplay_block_hit.mp3");
 		audios.put(AUDIO_GAMEPLAY_BLOCK_HIT, audio);
 		
 		audio = Audio.createIfSupported();
@@ -50,20 +49,17 @@ public class AudioPool {
 		audios.put(AUDIO_GAMEPLAY_LIVE_LOST, audio);
 		
 		audio = Audio.createIfSupported();
-		audio.setSrc("audios/gameplay_game_won.ogg");
+		audio.setSrc("audios/gameplay_game_won.mp3");
 		audios.put(AUDIO_GAMEPLAY_GAME_WON, audio);
 		
 		audio = Audio.createIfSupported();
-		audio.setSrc("audios/gameplay_game_lost.ogg");
+		audio.setSrc("audios/gameplay_game_lost.mp3");
 		audios.put(AUDIO_GAMEPLAY_GAME_LOST, audio);
 		
 		audio = Audio.createIfSupported();
-		audio.setSrc("audios/gameplay_paddle_staying.ogg");
-		audios.put(AUDIO_GAMEPLAY_PADDLE_STAYING, audio);
-		
-		audio = Audio.createIfSupported();
-		audio.setSrc("audios/gameplay_paddle_moving.ogg");
-		audios.put(AUDIO_GAMEPLAY_PADDLE_MOVING, audio);
+		audio.setSrc("audios/music.mp3");
+		audio.setVolume(0.7);
+		audios.put(AUDIO_MUSIC, audio);
 	}
 	
 	/**

@@ -8,6 +8,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.UiConsts;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.TextComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
@@ -73,10 +74,10 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 				if (isLeftButtonJustReleased) {
 					onClick();
 				}
-				setState(ButtonState.HOVER);
+				setSelected(true);
 			}
 		} else {
-			setState(ButtonState.NORMAL);
+			setSelected(false);
 		}	
 	}
 	
@@ -102,7 +103,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 * selected.
 	 */
 	public void onClick() {
-		GameManager.getAudioManager().play(AudioPool.AUDIO_BUTTON_CLICKED);
+		(new PlaySoundEvent(AudioPool.AUDIO_BUTTON_CLICKED)).fire();
 	}
 
 	/**
@@ -120,7 +121,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 * @param selected Is button selected (true) or not (false)
 	 */
 	public void setSelected(boolean selected) {
-		if (selected && state != ButtonState.HOVER) GameManager.getAudioManager().play(AudioPool.AUDIO_BUTTON_SELECT);
+		if (selected && state != ButtonState.HOVER) (new PlaySoundEvent(AudioPool.AUDIO_BUTTON_SELECT)).fire();
 		setState(selected ? ButtonState.HOVER : ButtonState.NORMAL);
 	}
 	

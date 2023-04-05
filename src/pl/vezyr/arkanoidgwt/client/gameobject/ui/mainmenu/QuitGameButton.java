@@ -2,10 +2,9 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui.mainmenu;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
-import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.QuitGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
-import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 
 public class QuitGameButton extends Button {
 
@@ -22,6 +21,6 @@ public class QuitGameButton extends Button {
 	@Override
 	public void onClick() {
 		super.onClick();
-		GameManager.dispatchEvent(new QuitGameButtonClickEvent());
+		(new QuitGameButtonClickEvent()).fire();
 	}
 }

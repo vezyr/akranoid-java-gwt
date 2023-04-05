@@ -3,6 +3,8 @@ package pl.vezyr.arkanoidgwt.client.gameobject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.ui.Image;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CircleCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
@@ -131,6 +133,7 @@ public class Ball extends GameObject implements Collidable {
 			float angle = ((collision.getOtherObjHitPoint().getX() - paddle.getCollider().getCenter().getX()) / paddle.getCollider().getHalfOfSize().getX()) * 60;
 			getDirection().set((float)Math.sin(Math.toRadians(angle)), (float)Math.cos(Math.toRadians(Math.abs(angle))) * -1);
 		}
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_BLOCK_HIT)).fire();
 	}
 	
 	/**
