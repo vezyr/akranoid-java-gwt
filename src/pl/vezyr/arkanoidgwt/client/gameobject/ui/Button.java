@@ -12,11 +12,11 @@ import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.TextComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.helper.ViewHelper;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
-import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 public class Button extends UiElement implements MouseInputHandler, Registrable {
 

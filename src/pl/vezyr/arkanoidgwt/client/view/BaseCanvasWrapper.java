@@ -5,10 +5,14 @@ import java.util.List;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
 
 import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.exception.CanvasNotSupportedException;
 import pl.vezyr.arkanoidgwt.client.gameobject.GameObject;
+import pl.vezyr.arkanoidgwt.client.helper.GameBlurHandler;
+import pl.vezyr.arkanoidgwt.client.helper.GameFocusHandler;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
@@ -19,6 +23,8 @@ public abstract class BaseCanvasWrapper implements CanvasWrapper {
 	protected Context2d context;
 	protected List<GameObject> staticObjects;
 	protected UiManager uiManager;
+	protected FocusHandler focusHandler;
+	protected BlurHandler blurHandler;
 	
 	public BaseCanvasWrapper() {
 		canvas = Canvas.createIfSupported();
@@ -30,6 +36,12 @@ public abstract class BaseCanvasWrapper implements CanvasWrapper {
 		canvas.setCoordinateSpaceWidth(screenResolution.getX());
 		canvas.setCoordinateSpaceHeight(screenResolution.getY());
 		context = canvas.getContext2d();
+		
+		focusHandler = new GameFocusHandler();
+		canvas.addFocusHandler(focusHandler);
+		
+		blurHandler = new GameBlurHandler();
+		canvas.addBlurHandler(blurHandler);
 		
 		staticObjects = new ArrayList<GameObject>();
 	}

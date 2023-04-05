@@ -1,7 +1,10 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
 import java.util.List;
+import java.util.Map;
 
+import pl.vezyr.arkanoidgwt.client.data.config.BlockDefinition;
+import pl.vezyr.arkanoidgwt.client.data.config.BlockType;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.data.config.TechnicalConfig;
@@ -52,4 +55,10 @@ public interface ConfigManager {
 	 * @return LevelDefinition
 	 */
 	public LevelDefinition getLevelDefinition();
+	
+	/**
+	 * Gets block definitions.
+	 * @return Map<BlockType, BlockDefinitions> Maps block type to its definition.
+	 */
+	public Map<BlockType, BlockDefinition> getBlocksDefinitions();
 }

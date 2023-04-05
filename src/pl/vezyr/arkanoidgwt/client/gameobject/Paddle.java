@@ -44,28 +44,28 @@ public class Paddle extends GameObject implements Collidable {
 		
 		switch (gameplayManager.getState()) {
 			case READY_TO_START:
-				handleOnReadyToStart(gameplayManager);
+				handleOnReadyToStart(gameplayManager, deltaTime / 1000);
 			break;
 			case IN_PROGRESS:
-				handleOnInProgress(gameplayManager);
+				handleOnInProgress(gameplayManager, deltaTime / 1000);
 			break;
 		}
 	}
 
-	private void handleOnInProgress(GameplayManager gameplayManager) {
-		move(gameplayManager);
+	private void handleOnInProgress(GameplayManager gameplayManager, double deltaTimeInSeconds) {
+		move(gameplayManager, deltaTimeInSeconds);
 	}
 
-	private void handleOnReadyToStart(GameplayManager gameplayManager) {
-		move(gameplayManager);
+	private void handleOnReadyToStart(GameplayManager gameplayManager, double deltaTimeInSeconds) {
+		move(gameplayManager, deltaTimeInSeconds);
 	}
 	
-	private void move(GameplayManager gemplayManager) {
+	private void move(GameplayManager gameplayManager, double deltaTimeInSeconds) {
 		if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_LEFT)) {
-			int newPos = this.getPosition().getX() - 5;
+			int newPos = this.getPosition().getX() - (int)(gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds);
 			this.getPosition().setX(newPos > 0 ? newPos : 1);
 		} else if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_RIGHT)) {
-			int newPos = this.getPosition().getX() + 5;
+			int newPos = this.getPosition().getX() + (int)(gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds);
 			this.getPosition().setX(
 				newPos < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth() ? 
 						newPos : 

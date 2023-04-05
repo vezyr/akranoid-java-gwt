@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 
 import pl.vezyr.arkanoidgwt.client.AudioPool;
@@ -27,6 +29,7 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CircleCollider
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionChecker;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResult;
+import pl.vezyr.arkanoidgwt.client.helper.GameplayFocusHandler;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
@@ -51,9 +54,14 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	private long gameStartTimestamp;
 	private long remainingTime;
 	private GameplayState state;
+	private GameplayState stateBeforePause;
 	private PlayerData playerData;
 	private GameplayUiData uiData;
 	private DifficultyLevel difficulty;
+	
+	private BlurHandler focusHandler;
+	
+	private static final Logger logger = Logger.getLogger(GameplayManager.class.getName());
 	
 	/**
 	 * Contructor of the GameplayManager with reference to the CanvasManager as parameter.
@@ -63,6 +71,7 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	 */
 	public GameplayManager(CanvasManager canvasManager) {
 		this.canvasManager = canvasManager;
+		focusHandler = new GameplayFocusHandler();
 	}
 	
 	/**
@@ -78,11 +87,18 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 		playerData = new PlayerData();
 		uiData = new GameplayUiData();
 		state = GameplayState.CHOOSE_DIFFICULTY;
+		
+		canvasManager.getCurrentLoadedCanvas().getCanvas().addBlurHandler(focusHandler);
 	}
 	
 	private void resetState() {
 		ball = new Ball(new Vector2<Integer>(700, 700), ImagesPool.getImage(ImagesPool.IMAGE_BALL));
-		paddle = new Paddle(new Vector2<Integer>(640, 720), ImagesPool.getImage(ImagesPool.IMAGE_PADDLE));
+		paddle = new Paddle(
+				new Vector2<Integer>(
+						canvasManager.getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() / 2, 
+						canvasManager.getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceHeight() - 100), 
+				ImagesPool.getImage(ImagesPool.IMAGE_PADDLE)
+		);
 		
 		dynamicObjects = new ArrayList<GameObject>(Arrays.asList(ball, paddle));
 		
@@ -143,6 +159,10 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 						state = newState;
 						onStateChangeToGameWon();
 					break;
+					case GAME_PAUSED:
+						stateBeforePause = state;
+						state = newState;
+					break;
 				}
 			break;
 			case IN_PROGRESS:
@@ -158,6 +178,10 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					case GAME_WIN:
 						state = newState;
 						onStateChangeToGameWon();
+					break;
+					case GAME_PAUSED:
+						stateBeforePause = state;
+						state = newState;
 					break;
 				}
 			break;
@@ -182,6 +206,18 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 				if (newState == GameplayState.READY_TO_START) {
 					state = newState;
 					onStateChangeToReadyToStart();
+				}
+			break;
+			case GAME_PAUSED:
+				switch (newState) {
+					case READY_TO_START:
+						state = newState;
+						stateBeforePause = null;
+					break;
+					case IN_PROGRESS:
+						state = newState;
+						stateBeforePause = null;
+					break;
 				}
 			break;
 		}
@@ -240,6 +276,10 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 		if (state == GameplayState.CHOOSE_DIFFICULTY) {
 			
 		} else if (state == GameplayState.READY_TO_START || state == GameplayState.IN_PROGRESS) {
+			if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_ESCAPE)) {
+				pause();
+			}
+			
 			if (state == GameplayState.READY_TO_START && GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_SPACE)) {
 				changeState(GameplayState.IN_PROGRESS);
 			}
@@ -336,6 +376,14 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	
 	public void restart() {
 		changeState(GameplayState.READY_TO_START);
+	}
+	
+	public void resume() {
+		changeState(stateBeforePause);
+	}
+	
+	public void pause() {
+		changeState(GameplayState.GAME_PAUSED);
 	}
 	
 	public GameplayState getState() {

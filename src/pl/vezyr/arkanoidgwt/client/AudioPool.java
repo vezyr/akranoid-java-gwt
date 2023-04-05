@@ -58,7 +58,7 @@ public class AudioPool {
 		
 		audio = Audio.createIfSupported();
 		audio.setSrc("audios/music.mp3");
-		audio.setVolume(0.7);
+		audio.setVolume(0.58);
 		audios.put(AUDIO_MUSIC, audio);
 	}
 	

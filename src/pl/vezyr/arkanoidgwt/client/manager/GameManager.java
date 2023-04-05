@@ -81,6 +81,7 @@ public class GameManager {
 			@Override
 			public void call(EventParam<QuitGameButtonClickEvent> event) {
 				changeState(GameState.QUIT_GAME);
+				audioManager.stopAll();
 			}
 		};
 		QuitGameButtonClickEvent.addListener(QuitGameButtonClickEvent.class, quitGameButtonClickAction);

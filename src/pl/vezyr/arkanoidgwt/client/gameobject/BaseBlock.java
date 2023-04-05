@@ -55,6 +55,11 @@ public class BaseBlock extends GameObject implements Destroyable, Collidable {
 	public int currentHealth() {
 		return health.getHealth();
 	}
+	
+	@Override
+	public float currentHealthNormlized() {
+		return health.getHealthNormalized();
+	}
 
 	@Override
 	public boolean isAlive() {

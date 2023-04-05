@@ -33,6 +33,7 @@ public class ImagesPool {
 	public static final String UI_GAMEPLAY_HEART_STROKED 			= 	"ui_gameplay_heart_stroked";
 	public static final String UI_GAMEPLAY_HEART_FILLED 			= 	"ui_gameplay_heart_filled";
 	public static final String UI_GAMEPLAY_POPUP_BG 				= 	"ui_gameplay_popup_bg";
+	public static final String UI_GAMEPLAY_BUTTON_PAUSE				=	"ui_gameplay_button_pause";
 	
 	public static final String UI_GAMEPLAY_POPUP_GREY_TOP_LEFT 		= 	"ui_gameplay_popup_grey_top_left";
 	public static final String UI_GAMEPLAY_POPUP_GREY_TOP 			= 	"ui_gameplay_popup_grey_top";
@@ -76,6 +77,7 @@ public class ImagesPool {
 		images.put(UI_GAMEPLAY_TOP_BG, new Image("images/ui/gameplay_top_bg.png"));
 		images.put(UI_GAMEPLAY_HEART_STROKED, new Image("images/ui/heart_stroked.png"));
 		images.put(UI_GAMEPLAY_HEART_FILLED, new Image("images/ui/heart_filled.png"));
+		images.put(UI_GAMEPLAY_BUTTON_PAUSE, new Image("images/ui/button_pause.png"));
 		images.put(UI_GAMEPLAY_POPUP_BG, new Image("images/ui/gameplay_popup.png"));
 		images.put(UI_GAMEPLAY_POPUP_GREY_TOP_LEFT, new Image("images/ui/panel_grey/panel_grey_top_left.png"));
 		images.put(UI_GAMEPLAY_POPUP_GREY_TOP, new Image("images/ui/panel_grey/panel_grey_top.png"));

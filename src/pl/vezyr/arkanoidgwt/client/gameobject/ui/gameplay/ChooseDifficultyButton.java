@@ -33,6 +33,5 @@ public class ChooseDifficultyButton extends Button {
 		GameplayManager gameplayManager = (GameplayManager)GameManager.getSceneManager();
 		
 		gameplayManager.chooseDifficulty(difficutlyLevel);
-		
 	}
 }

@@ -33,9 +33,20 @@ public interface AudioManager {
 	public void playInLoop(String audioId);
 	
 	/**
-	 * Stops selected audio once.
+	 * Stops selected audio.
 	 * @param audioId Audio id.
 	 * @see pl.vezyr.arkanoidgwt.client.AudioPool
 	 */
 	public void stop(String audioId);
+	
+	/**
+	 * Stops all sounds.
+	 */
+	public void stopAll();
+	
+	/**
+	 * Pause selected sound.
+	 * @param audioId Audio id.
+	 */
+	public void pause(String audioId);
 }

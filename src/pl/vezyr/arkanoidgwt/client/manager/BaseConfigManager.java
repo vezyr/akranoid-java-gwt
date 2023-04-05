@@ -1,8 +1,12 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import pl.vezyr.arkanoidgwt.client.data.config.BlockDefinition;
+import pl.vezyr.arkanoidgwt.client.data.config.BlockType;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
 import pl.vezyr.arkanoidgwt.client.data.config.TechnicalConfig;
@@ -13,9 +17,11 @@ public abstract class BaseConfigManager implements ConfigManager {
 	protected List<DifficultyLevel> difficultyLevels;
 	protected TechnicalConfig technicalConfig;
 	protected LevelDefinition levelDefinition;
+	protected Map<BlockType, BlockDefinition> blocksDefinitions;
 	
 	public BaseConfigManager() {
 		difficultyLevels = new ArrayList<DifficultyLevel>();
+		blocksDefinitions = new HashMap<BlockType, BlockDefinition>();
 	}
 	
 	@Override
@@ -54,5 +60,10 @@ public abstract class BaseConfigManager implements ConfigManager {
 	@Override
 	public LevelDefinition getLevelDefinition() {
 		return levelDefinition;
+	}
+	
+	@Override
+	public Map<BlockType, BlockDefinition> getBlocksDefinitions() {
+		return blocksDefinitions;
 	}
 }

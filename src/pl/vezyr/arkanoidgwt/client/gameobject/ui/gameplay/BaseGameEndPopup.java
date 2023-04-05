@@ -8,7 +8,7 @@ import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
 public abstract class BaseGameEndPopup extends BasePopup {
 
-private TextComponent headerText;
+	private TextComponent headerText;
 
 	private RestartButton restartButton;
 	private LeaveGameButton leaveGameButton;

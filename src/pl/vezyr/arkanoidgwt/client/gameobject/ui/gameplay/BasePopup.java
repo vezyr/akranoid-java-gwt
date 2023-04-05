@@ -15,11 +15,11 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.StretchedAndPositionedIm
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.helper.ViewHelper;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
-import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 public abstract class BasePopup extends UiElement implements KeyboardInputHandler, Registrable {
 

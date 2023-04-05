@@ -15,17 +15,19 @@ import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.ChooseDifficultyButton;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.LifeIndicator;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.PauseButton;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.PausePopup;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.Timer;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.YouLostPopup;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay.YouWonPopup;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.helper.ViewHelper;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.GameplayState;
 import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
 import pl.vezyr.arkanoidgwt.client.view.CanvasWrapper;
-import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 /**
  * Manager class to handle UI during gameplay.
@@ -38,6 +40,8 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 	private Timer timer;
 	private YouLostPopup youLostPopup;
 	private YouWonPopup youWonPopup;
+	private PausePopup pausePopup;
+	private PauseButton pauseButton;
 	private List<ChooseDifficultyButton> difficultyButtons;
 	
 	private int currentSelectedButton;
@@ -54,6 +58,14 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 		youWonPopup = new YouWonPopup(new Vector2<Integer>(
 				canvas.getCanvas().getCoordinateSpaceWidth() / 2, 
 				canvas.getCanvas().getCoordinateSpaceHeight() / 2
+		));
+		pausePopup = new PausePopup(new Vector2<Integer>(
+				canvas.getCanvas().getCoordinateSpaceWidth() / 2, 
+				canvas.getCanvas().getCoordinateSpaceHeight() / 2
+		));
+		pauseButton = new PauseButton(new Vector2<Integer>(
+				canvas.getCanvas().getCoordinateSpaceWidth() - 50, 
+				20
 		));
 		
 		
@@ -82,10 +94,15 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 				canvas.getCanvas().getCoordinateSpaceWidth() - 100, canvas.getCanvas().getCoordinateSpaceHeight() - 25
 			), UiConsts.UI_FONT_COLOR_LIGHT);
 		
+		difficultyButtons.forEach(button -> {
+			allElements.add(button);
+		});
 		allElements.add(lifesIndicator);
 		allElements.add(timer);
 		allElements.add(youLostPopup);
 		allElements.add(youWonPopup);
+		allElements.add(pausePopup);
+		allElements.add(pauseButton);
 		allElements.addAll(difficultyButtons);
 		
 		if (this instanceof Registrable) {
@@ -107,6 +124,7 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 			timer.setActive(true);
 			lifesIndicator.setNumberOfLives(gameplayUiData.getPlayersNumberOfLives());
 			lifesIndicator.setActive(true);
+			pauseButton.setActive(true);
 		} else {
 			difficultyButtons.forEach(button -> button.setActive(true));
 		}
@@ -114,6 +132,8 @@ public class GameplayUiManager extends BaseUiManager implements KeyboardInputHan
 			youWonPopup.setActive(true);
 		} else if (gameplayUiData.getState() == GameplayState.GAME_LOST) {
 			youLostPopup.setActive(true);
+		} else if (gameplayUiData.getState() == GameplayState.GAME_PAUSED) {
+			pausePopup.setActive(true);
 		}
 	}
 	
