@@ -11,11 +11,13 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.BaseComponent;
  */
 public class HealthComponent extends BaseComponent {
 
+	private int initialHealth;
 	private int health;
 	
 	public HealthComponent(GameObject gameObject, int baseHealth) {
 		super(gameObject);
-		this.health = baseHealth;
+		this.initialHealth = baseHealth;
+		this.health = this.initialHealth;
 	}
 	
 	/**
@@ -24,6 +26,15 @@ public class HealthComponent extends BaseComponent {
 	 */
 	public int getHealth() {
 		return health;
+	}
+	
+	/**
+	 * Returns current health, normalized.
+	 * The returned value will be from 0 to 1.
+	 * @return float Normalized health.
+	 */
+	public float getHealthNormalized() {
+		return (float)health / (float)initialHealth;
 	}
 	
 	/**
@@ -58,5 +69,13 @@ public class HealthComponent extends BaseComponent {
 	 */
 	public void setHealth(int health) {
 		this.health = health;
+	}
+
+	/**
+	 * Returns the initial health.
+	 * @return int Initial health.
+	 */
+	public int getInitialHealth() {
+		return initialHealth;
 	}
 }

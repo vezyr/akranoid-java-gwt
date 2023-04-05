@@ -13,13 +13,13 @@ public class PausePopup extends BasePopup {
 	private ResumeButton resumeButton;
 	private LeaveGameButton leaveGameButton;
 	
-	public PausePopup(Vector2<Integer> position, Vector2<Integer> size) {
-		super(position, size);
+	public PausePopup(Vector2<Integer> position) {
+		super(new Vector2<Integer>(position.getX() - (320 / 2), position.getY() - (460 / 2)), new Vector2<Integer>(320, 460));
 		
 		headerText = new TextComponent(
 				this, 
 				new Vector2<Integer>(getSize().getX() / 2, 60), 
-				"Puase", 
+				"Paused", 
 				UiConsts.UI_FONT_SIZE_HEADER, 
 				UiConsts.UI_FONT_NAME, 
 				UiConsts.UI_FONT_COLOR_DARK

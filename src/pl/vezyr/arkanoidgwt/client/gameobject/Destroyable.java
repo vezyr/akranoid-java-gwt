@@ -24,6 +24,12 @@ public interface Destroyable {
 	 */
 	public int currentHealth();
 	/**
+	 * Returns the current health of {@code GameObject}, normalized.
+	 * The returned value will be from 0 to 1.
+	 * @return int Number of normalized health points of {@code GameObject}
+	 */
+	public float currentHealthNormlized();
+	/**
 	 * Returns the information if {@code GameObject} is still considered as alive.
 	 * @return boolean True if {@code GameObject} is still alive, false otherwise.
 	 */

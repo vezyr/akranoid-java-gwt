@@ -6,21 +6,25 @@ import java.util.Set;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import pl.vezyr.arkanoidgwt.client.data.MainMenuUiData;
 import pl.vezyr.arkanoidgwt.client.data.UiData;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
+import pl.vezyr.arkanoidgwt.client.gameobject.ui.mainmenu.LoadingCompletedElement;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.mainmenu.NewGameButton;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.mainmenu.QuitGameButton;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.helper.ViewHelper;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
-import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 public class MainMenuUiManager extends BaseUiManager implements KeyboardInputHandler, Registrable {
 
 	private Button newGameButton;
 	private Button quitGameButton;
+	
+	private LoadingCompletedElement loadingElement;
 	
 	private int currentSelectedButton;
 	
@@ -29,9 +33,11 @@ public class MainMenuUiManager extends BaseUiManager implements KeyboardInputHan
 	public MainMenuUiManager() {
 		newGameButton = new NewGameButton(new Vector2<Integer>(540, 400));
 		quitGameButton = new QuitGameButton(new Vector2<Integer>(540, 470));
+		loadingElement = new LoadingCompletedElement();
 		
 		allElements.add(newGameButton);
 		allElements.add(quitGameButton);
+		allElements.add(loadingElement);
 		
 		selectionToButtonMap = new HashMap<Integer, Button>(2);
 		selectionToButtonMap.put(1, newGameButton);
@@ -46,11 +52,19 @@ public class MainMenuUiManager extends BaseUiManager implements KeyboardInputHan
 	
 	@Override
 	public void mainUpdateUi(UiData data) {
+		if (!(data instanceof MainMenuUiData)) {
+			return;
+		}
+		MainMenuUiData mainMenuUiData = (MainMenuUiData)data;
+		
 		updateState();
 		
-		
-		newGameButton.setActive(true);
-		quitGameButton.setActive(true);
+		if (mainMenuUiData.isLoaded()) {
+			newGameButton.setActive(true);
+			quitGameButton.setActive(true);
+		} else {
+			loadingElement.setActive(true);
+		}
 	}
 	
 	@Override

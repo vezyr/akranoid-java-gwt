@@ -1,4 +1,4 @@
-package pl.vezyr.arkanoidgwt.client.view;
+package pl.vezyr.arkanoidgwt.client.helper;
 
 import java.util.Map;
 
@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
-import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 
 public class ViewHelper {	
 	public static boolean isOverUiElement(Vector2<Integer> point, UiElement element) {
@@ -19,6 +18,14 @@ public class ViewHelper {
 	}
 	
 	public static int handleKeyboardInputOnVerticalMenu(int justReleasedKey, int currentSelectedButton, Map<Integer, Button> selectionToButtonMap) {
+		boolean hasAnyButtonActive = false;
+		for (Button button : selectionToButtonMap.values()) {
+			if (button.isActive()) hasAnyButtonActive = true;
+		}
+		if (!hasAnyButtonActive) {
+			return -1;
+		}
+		
 		if (justReleasedKey == KeyCodes.KEY_UP) {
 			selectionToButtonMap.values().forEach(button -> button.setSelected(false));
 			if (currentSelectedButton == -1) {

@@ -74,10 +74,10 @@ public class Ball extends GameObject implements Collidable {
 		
 		switch (gameplayManager.getState()) {
 			case READY_TO_START:
-				handleOnReadyToStart(gameplayManager);
+				handleOnReadyToStart(gameplayManager, deltaTime / 1000);
 			break;
 			case IN_PROGRESS:
-				handleOnInProgress(gameplayManager);
+				handleOnInProgress(gameplayManager, deltaTime / 1000);
 			break;
 		}
 	}
@@ -87,7 +87,7 @@ public class Ball extends GameObject implements Collidable {
 		image.draw(context);
 	}
 	
-	private void handleOnReadyToStart(GameplayManager gameplayManager) {
+	private void handleOnReadyToStart(GameplayManager gameplayManager, double deltaTimeInSeconds) {
 		Paddle paddle = gameplayManager.getPaddle();
 		getPosition().set(
 			paddle.getPosition().getX() + (paddle.getImage().getWidth() / 2) - (this.getImage().getWidth() / 2), 
@@ -95,10 +95,10 @@ public class Ball extends GameObject implements Collidable {
 		);
 	}
 	
-	private void handleOnInProgress(GameplayManager gameplayManager) {
+	private void handleOnInProgress(GameplayManager gameplayManager, double deltaTimeInSeconds) {
 		// Sets new position
-		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * gameplayManager.getDifficulty().getBallSpeed()));
-		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * gameplayManager.getDifficulty().getBallSpeed()));
+		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds));
+		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds));
 		
 		// Checks and corrects the position if ball is going outside the Canvas.
 		if(this.getPosition().getX() >= GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {

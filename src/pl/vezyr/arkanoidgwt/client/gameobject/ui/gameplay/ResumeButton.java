@@ -27,6 +27,6 @@ public class ResumeButton extends Button {
 		}
 		GameplayManager gameplayManager = (GameplayManager)GameManager.getSceneManager();
 		
-		gameplayManager.restart();
+		gameplayManager.resume();
 	}
 }

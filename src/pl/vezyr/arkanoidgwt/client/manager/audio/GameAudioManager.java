@@ -86,4 +86,21 @@ public class GameAudioManager implements AudioManager {
 		}
 	}
 
+	@Override
+	public void pause(String audioId) {
+		if (AudioPool.getAudio(audioId) != null) {
+			AudioPool.getAudio(audioId).pause();
+		}
+	}
+	
+	@Override
+	public void stopAll() {
+		stop(AudioPool.AUDIO_BUTTON_CLICKED);
+		stop(AudioPool.AUDIO_BUTTON_SELECT);
+		stop(AudioPool.AUDIO_GAMEPLAY_BLOCK_HIT);
+		stop(AudioPool.AUDIO_GAMEPLAY_GAME_LOST);
+		stop(AudioPool.AUDIO_GAMEPLAY_GAME_WON);
+		stop(AudioPool.AUDIO_GAMEPLAY_LIVE_LOST);
+		stop(AudioPool.AUDIO_MUSIC);
+	}
 }

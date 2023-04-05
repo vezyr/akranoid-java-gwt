@@ -37,8 +37,6 @@ public class GameInputManager implements InputManager {
 	private HashSet<Integer> pressedKeys;
 	private int lastReleasedKey;
 	
-	private static final Logger logger = Logger.getLogger(GameInputManager.class.getName());
-	
 	public GameInputManager(CanvasWrapper canvas) {
 		this.canvas = canvas;
 		
@@ -159,15 +157,12 @@ public class GameInputManager implements InputManager {
 		
 		int pressedKey = keyboardKeyDownHandler.getLastPressedKey();
 		if (pressedKey != -1 && !pressedKeys.contains(pressedKey)) {
-			logger.info("Pressed key: " + pressedKey);
 			pressedKeys.add(pressedKey);
-			
 		}
 		
 		int releasedKey = keyboardKeyUpHandler.getLastReleasedKey();
 		lastReleasedKey = releasedKey;
 		if (releasedKey != -1 && pressedKeys.contains(releasedKey)) {
-			logger.info("Released key: " + releasedKey);
 			pressedKeys.remove(releasedKey);
 		}
 		
