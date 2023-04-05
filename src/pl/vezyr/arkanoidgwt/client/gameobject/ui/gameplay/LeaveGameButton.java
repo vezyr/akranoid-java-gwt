@@ -2,10 +2,9 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
-import pl.vezyr.arkanoidgwt.client.event.LeaveGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.LeaveGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
-import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 
 public class LeaveGameButton extends Button {
 
@@ -21,7 +20,8 @@ public class LeaveGameButton extends Button {
 	
 	@Override
 	public void onClick() {
-		GameManager.dispatchEvent(new LeaveGameButtonClickEvent());
+		super.onClick();
+		(new LeaveGameButtonClickEvent()).fire();
 	}
 	
 }

@@ -2,10 +2,9 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui.mainmenu;
 
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
-import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.NewGameButtonClickEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
-import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 
 public class NewGameButton extends Button {
 
@@ -21,6 +20,7 @@ public class NewGameButton extends Button {
 
 	@Override
 	public void onClick() {
-		GameManager.dispatchEvent(new NewGameButtonClickEvent());
+		super.onClick();
+		(new NewGameButtonClickEvent()).fire();
 	}
 }

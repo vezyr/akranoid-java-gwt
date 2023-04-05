@@ -4,7 +4,8 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.Image;
 
-import pl.vezyr.arkanoidgwt.client.gameobject.component.Drawable;
+import pl.vezyr.arkanoidgwt.client.AudioPool;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.BoxCollider;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.Collidable;
@@ -13,7 +14,6 @@ import pl.vezyr.arkanoidgwt.client.gameobject.component.collision.CollisionResul
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
 import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.GameplayManager;
-import pl.vezyr.arkanoidgwt.client.view.ViewHelper;
 
 /**
  * GameObject that represents Paddle.
@@ -72,8 +72,8 @@ public class Paddle extends GameObject implements Collidable {
 						GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()
 			);
 		} else if (GameManager.getInputManager().hasMouseMoved()) { 
-			if (GameManager.getInputManager().getMousePosition().getX() > 0 && 
-				GameManager.getInputManager().getMousePosition().getX() < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {
+			if (GameManager.getInputManager().getMousePosition().getX() > (getSize().getX() / 2) && 
+				GameManager.getInputManager().getMousePosition().getX() < GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - (getSize().getX() / 2)) {
 				this.getPosition().setX(GameManager.getInputManager().getMousePosition().getX() - (getSize().getX() / 2));
 			}
 		}
@@ -85,7 +85,7 @@ public class Paddle extends GameObject implements Collidable {
 	}
 
 	@Override
-	public void handleCollision(CollisionResult collision) {	
+	public void handleCollision(CollisionResult collision) {
 	}
 	
 	@Override

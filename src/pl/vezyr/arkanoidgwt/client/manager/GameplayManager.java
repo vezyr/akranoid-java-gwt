@@ -7,11 +7,13 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.GameplayUiData;
 import pl.vezyr.arkanoidgwt.client.data.PlayerData;
 import pl.vezyr.arkanoidgwt.client.data.config.DifficultyLevel;
 import pl.vezyr.arkanoidgwt.client.data.config.LevelDefinition;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.Ball;
 import pl.vezyr.arkanoidgwt.client.gameobject.BaseBlock;
 import pl.vezyr.arkanoidgwt.client.gameobject.Destroyable;
@@ -135,9 +137,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					case GAME_LOST:
 						state = newState;
 						ObjectsRegister.unregister(this);
+						onStateChangeToGameLost();
 					break;
 					case GAME_WIN:
 						state = newState;
+						onStateChangeToGameWon();
 					break;
 				}
 			break;
@@ -149,9 +153,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					break;
 					case GAME_LOST:
 						state = newState;
+						onStateChangeToGameLost();
 					break;
 					case GAME_WIN:
 						state = newState;
+						onStateChangeToGameWon();
 					break;
 				}
 			break;
@@ -162,6 +168,7 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 					break;
 					case GAME_LOST:
 						state = newState;
+						onStateChangeToGameLost();
 					break;
 				}
 			break;
@@ -197,12 +204,21 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	}
 	
 	private void onStateChangeToLostLive() {
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_LIVE_LOST)).fire();
 		if(playerData.liveLost()) {
 			changeState(GameplayState.READY_TO_START);
 			ObjectsRegister.register(this);
 		} else {
 			changeState(GameplayState.GAME_LOST);
 		}
+	}
+	
+	private void onStateChangeToGameWon() {
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_GAME_WON)).fire();
+	}
+	
+	private void onStateChangeToGameLost() {
+		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_GAME_LOST)).fire();
 	}
 	
 	/**

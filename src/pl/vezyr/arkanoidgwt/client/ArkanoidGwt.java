@@ -14,6 +14,7 @@ public class ArkanoidGwt implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		ImagesPool.init();
+		AudioPool.init();
 		
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 			@Override

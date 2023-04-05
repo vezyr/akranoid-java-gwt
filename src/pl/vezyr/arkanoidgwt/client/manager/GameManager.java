@@ -1,27 +1,23 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.logging.Logger;
-
-import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.dom.client.NativeEvent;
 
-import pl.vezyr.arkanoidgwt.client.event.ArkanoidGwtEvent;
-import pl.vezyr.arkanoidgwt.client.event.LeaveGameButtonClickEvent;
-import pl.vezyr.arkanoidgwt.client.event.NewGameButtonClickEvent;
-import pl.vezyr.arkanoidgwt.client.event.QuitGameButtonClickEvent;
-import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
+import pl.vezyr.arkanoidgwt.client.event.base.EventCallable;
+import pl.vezyr.arkanoidgwt.client.event.base.EventParam;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.LeaveGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.NewGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.event.gameplay.QuitGameButtonClickEvent;
+import pl.vezyr.arkanoidgwt.client.manager.audio.AudioManager;
+import pl.vezyr.arkanoidgwt.client.manager.audio.GameAudioManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.GameInputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.InputManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.KeyboardInputHandler;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
-import pl.vezyr.arkanoidgwt.client.view.ui.GameplayUiManager;
-import pl.vezyr.arkanoidgwt.client.view.ui.MainMenuUiManager;
 import pl.vezyr.arkanoidgwt.client.view.ui.UiManager;
 
 /**
@@ -43,10 +39,13 @@ public class GameManager {
 	private static UiManager uiManager;
 	private static SceneManager sceneManager;
 	private static ConfigManager configManager;
+	private static AudioManager audioManager;
 	
 	private double lastFrameTimestamp = 0;
 	
-	private static final Queue<ArkanoidGwtEvent> eventsQueue = new LinkedList<ArkanoidGwtEvent>();
+	private EventCallable<LeaveGameButtonClickEvent> leaveGameButtonClickAction;
+	private EventCallable<NewGameButtonClickEvent> newGameButtonClickAction;
+	private EventCallable<QuitGameButtonClickEvent> quitGameButtonClickAction;
 	
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
@@ -57,9 +56,34 @@ public class GameManager {
 		canvasManager = new CanvasManager();
 		gameplayManager = new GameplayManager(canvasManager);
 		mainMenuManager = new MainMenuManager();
+		audioManager = new GameAudioManager();
 		
 		onStateChangeToMainMenu();
 		state = GameState.MAIN_MENU;
+		
+		leaveGameButtonClickAction = new EventCallable<LeaveGameButtonClickEvent>() {
+			@Override
+			public void call(EventParam<LeaveGameButtonClickEvent> event) {
+				changeState(GameState.MAIN_MENU);
+			}
+		};
+		LeaveGameButtonClickEvent.addListener(LeaveGameButtonClickEvent.class, leaveGameButtonClickAction);
+		
+		newGameButtonClickAction = new EventCallable<NewGameButtonClickEvent>() {
+			@Override
+			public void call(EventParam<NewGameButtonClickEvent> event) {
+				changeState(GameState.GAMEPLAY);
+			}
+		};
+		NewGameButtonClickEvent.addListener(NewGameButtonClickEvent.class, newGameButtonClickAction);
+		
+		quitGameButtonClickAction = new EventCallable<QuitGameButtonClickEvent>() {
+			@Override
+			public void call(EventParam<QuitGameButtonClickEvent> event) {
+				changeState(GameState.QUIT_GAME);
+			}
+		};
+		QuitGameButtonClickEvent.addListener(QuitGameButtonClickEvent.class, quitGameButtonClickAction);
 		
 		logger.info("Game Manager constructed.");
 	}
@@ -79,7 +103,6 @@ public class GameManager {
 				
 				inputManager.processInput();
 				notifyAllInputHandlers();
-				handleEventsQueue();
 				sceneManager.update(deltaTime);
 				sceneManager.redraw();
 				
@@ -90,7 +113,7 @@ public class GameManager {
 			}
 		};
 		
-		 AnimationScheduler.get().requestAnimationFrame(gameLoop);
+		AnimationScheduler.get().requestAnimationFrame(gameLoop);
 	}
 	
 	/**
@@ -150,24 +173,6 @@ public class GameManager {
 	 */
 	private void onStateChangeToQuitGame() {
 		canvasManager.unloadAllFromCanvasContainer();
-	}
-	
-	/**
-	 * Handles the queued events.
-	 * Dequeue all events and take action on each.
-	 */
-	private void handleEventsQueue() {
-		ArkanoidGwtEvent event = eventsQueue.poll();
-		while (event != null) {
-			if (event instanceof NewGameButtonClickEvent) {
-				changeState(GameState.GAMEPLAY);
-			} else if (event instanceof QuitGameButtonClickEvent) {
-				changeState(GameState.QUIT_GAME);
-			} else if (event instanceof LeaveGameButtonClickEvent) {
-				changeState(GameState.MAIN_MENU);
-			}
-			event = eventsQueue.poll();
-		}
 	}
 	
 	/**
@@ -245,11 +250,10 @@ public class GameManager {
 	}
 	
 	/**
-	 * Dispatch event - add event to queue to be 
-	 * processed on next frame.
-	 * @param event Event to queue.
+	 * Returns currently loaded Audio manager.
+	 * @return AudioManager Loaded Audio manager.
 	 */
-	public static void dispatchEvent(ArkanoidGwtEvent event) {
-		eventsQueue.add(event);
+	public static AudioManager getAudioManager() {
+		return audioManager;
 	}
 }

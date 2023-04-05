@@ -2,15 +2,17 @@ package pl.vezyr.arkanoidgwt.client.gameobject.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import pl.vezyr.arkanoidgwt.client.AudioPool;
 import pl.vezyr.arkanoidgwt.client.UiConsts;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
+import pl.vezyr.arkanoidgwt.client.event.audio.PlaySoundEvent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.ImageComponent;
 import pl.vezyr.arkanoidgwt.client.gameobject.component.TextComponent;
 import pl.vezyr.arkanoidgwt.client.helper.Vector2;
+import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.input.MouseInputHandler;
 import pl.vezyr.arkanoidgwt.client.register.ObjectsRegister;
 import pl.vezyr.arkanoidgwt.client.register.Registrable;
@@ -23,8 +25,6 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	
 	private ImageComponent image;
 	private TextComponent textComponent;
-	
-	private static final Logger logger = Logger.getLogger(Button.class.getName());
 	
 	public Button(Vector2<Integer> position, ButtonStateData normalStateData, ButtonStateData hoverStateData, ButtonStateData pressedStateData, String textOnButton) {
 		super(position, new Vector2<Integer>(normalStateData.getImage().getWidth(), normalStateData.getImage().getHeight()));
@@ -74,10 +74,10 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 				if (isLeftButtonJustReleased) {
 					onClick();
 				}
-				setState(ButtonState.HOVER);
+				setSelected(true);
 			}
 		} else {
-			setState(ButtonState.NORMAL);
+			setSelected(false);
 		}	
 	}
 	
@@ -103,6 +103,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 * selected.
 	 */
 	public void onClick() {
+		(new PlaySoundEvent(AudioPool.AUDIO_BUTTON_CLICKED)).fire();
 	}
 
 	/**
@@ -120,6 +121,7 @@ public class Button extends UiElement implements MouseInputHandler, Registrable 
 	 * @param selected Is button selected (true) or not (false)
 	 */
 	public void setSelected(boolean selected) {
+		if (selected && state != ButtonState.HOVER) (new PlaySoundEvent(AudioPool.AUDIO_BUTTON_SELECT)).fire();
 		setState(selected ? ButtonState.HOVER : ButtonState.NORMAL);
 	}
 	
