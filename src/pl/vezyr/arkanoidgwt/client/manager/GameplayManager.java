@@ -232,7 +232,9 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 		} else if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_RIGHT)) {
 			xAngle = 45.0f;
 		}
-		ball.getDirection().set((float)Math.sin(Math.toRadians(xAngle)), (float)(Math.abs(Math.cos(Math.toRadians(xAngle)) * -1.0f)));
+		float directionX = (float)Math.sin(Math.toRadians(xAngle));
+		float directionY = (float)(Math.cos(Math.toRadians(Math.abs(xAngle)))) * -1.0f;
+		ball.getDirection().set(directionX,  directionY);
 		ObjectsRegister.unregister(this);
 	}
 	

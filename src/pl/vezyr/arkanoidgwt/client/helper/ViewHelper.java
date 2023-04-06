@@ -8,6 +8,7 @@ import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.UiElement;
 
 public class ViewHelper {	
+	
 	public static boolean isOverUiElement(Vector2<Integer> point, UiElement element) {
 		if (!element.isActive())
 			return false;
@@ -45,7 +46,9 @@ public class ViewHelper {
 				currentSelectedButton = 1;
 			}
 		} else if (justReleasedKey == KeyCodes.KEY_ENTER) {
-			selectionToButtonMap.get(currentSelectedButton).onClick();
+			if (selectionToButtonMap.get(currentSelectedButton) != null) {
+				selectionToButtonMap.get(currentSelectedButton).onClick();
+			}
 		}
 		return currentSelectedButton;
 	}
