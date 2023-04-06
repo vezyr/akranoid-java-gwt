@@ -74,10 +74,10 @@ public class Ball extends GameObject implements Collidable {
 		
 		switch (gameplayManager.getState()) {
 			case READY_TO_START:
-				handleOnReadyToStart(gameplayManager, deltaTime / 1000);
+				handleOnReadyToStart(gameplayManager, deltaTime / 1000.0);
 			break;
 			case IN_PROGRESS:
-				handleOnInProgress(gameplayManager, deltaTime / 1000);
+				handleOnInProgress(gameplayManager, deltaTime / 1000.0);
 			break;
 		}
 	}
@@ -97,20 +97,20 @@ public class Ball extends GameObject implements Collidable {
 	
 	private void handleOnInProgress(GameplayManager gameplayManager, double deltaTimeInSeconds) {
 		// Sets new position
-		this.getPosition().setX((int)(this.getPosition().getX() + this.getDirection().getX() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds));
-		this.getPosition().setY((int)(this.getPosition().getY() + this.getDirection().getY() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds));
+		this.getPosition().setX((int)(this.getPosition().getX() + (this.getDirection().getX() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds)));
+		this.getPosition().setY((int)(this.getPosition().getY() + (this.getDirection().getY() * gameplayManager.getDifficulty().getBallSpeed() * deltaTimeInSeconds)));
 		
 		// Checks and corrects the position if ball is going outside the Canvas.
 		if(this.getPosition().getX() >= GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth()) {
 			this.getPosition().setX(GameManager.getCanvasManager().getCurrentLoadedCanvas().getCanvas().getCoordinateSpaceWidth() - this.getImage().getWidth() - 1);
-			this.getDirection().setX(this.getDirection().getX() * -1);
+			this.getDirection().setX(this.getDirection().getX() * -1.0f);
 		} else if(this.getPosition().getX() <= 0) {
 			this.getPosition().setX(1);
-			this.getDirection().setX(this.getDirection().getX() * -1);
+			this.getDirection().setX(this.getDirection().getX() * -1.0f);
 		} 
 		if(this.getPosition().getY() <= 0) {
 			this.getPosition().setY(1);
-			this.getDirection().setY(this.getDirection().getY() * -1);
+			this.getDirection().setY(this.getDirection().getY() * -1.0f);
 		}
 		
 		// Changes the state to LOST_LIVE if ball went down outside the Canvas
@@ -131,7 +131,7 @@ public class Ball extends GameObject implements Collidable {
 			getDirection().setX(0.0f);
 		} else {
 			float angle = ((collision.getOtherObjHitPoint().getX() - paddle.getCollider().getCenter().getX()) / paddle.getCollider().getHalfOfSize().getX()) * 60;
-			getDirection().set((float)Math.sin(Math.toRadians(angle)), (float)Math.cos(Math.toRadians(Math.abs(angle))) * -1);
+			getDirection().set((float)Math.sin(Math.toRadians(angle)), (float)Math.cos(Math.toRadians(Math.abs(angle))) * -1.0f);
 		}
 		(new PlaySoundEvent(AudioPool.AUDIO_GAMEPLAY_BLOCK_HIT)).fire();
 	}
@@ -157,9 +157,9 @@ public class Ball extends GameObject implements Collidable {
 		getPosition().set((int)(getPosition().getX() + (correctionDistance * getDirection().getX())), (int)(getPosition().getY() + (correctionDistance * getDirection().getY())));
 		
 		if (hitPoint.getX() == (float)block.getPosition().getX() || hitPoint.getX() == (float)block.getPosition().getX() + block.getSize().getX()) {
-			getDirection().setX(getDirection().getX() * -1);
+			getDirection().setX(getDirection().getX() * -1.0f);
 		} else if (hitPoint.getY() == (float)block.getPosition().getY() || hitPoint.getY() == (float)block.getPosition().getY() + block.getSize().getY()) {
-			getDirection().setY(getDirection().getY() * -1);
+			getDirection().setY(getDirection().getY() * -1.0f);
 		}
 	}
 

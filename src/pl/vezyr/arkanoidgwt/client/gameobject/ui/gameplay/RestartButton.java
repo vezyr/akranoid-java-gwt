@@ -1,7 +1,5 @@
 package pl.vezyr.arkanoidgwt.client.gameobject.ui.gameplay;
 
-import java.util.logging.Logger;
-
 import pl.vezyr.arkanoidgwt.client.ImagesPool;
 import pl.vezyr.arkanoidgwt.client.data.uielement.ButtonStateData;
 import pl.vezyr.arkanoidgwt.client.gameobject.ui.Button;
@@ -10,8 +8,6 @@ import pl.vezyr.arkanoidgwt.client.manager.GameManager;
 import pl.vezyr.arkanoidgwt.client.manager.GameplayManager;
 
 public class RestartButton extends Button {
-
-	private static final Logger logger = Logger.getLogger(RestartButton.class.getName());
 	
 	public RestartButton(Vector2<Integer> position) {
 		super(
@@ -30,8 +26,6 @@ public class RestartButton extends Button {
 			return;
 		}
 		GameplayManager gameplayManager = (GameplayManager)GameManager.getSceneManager();
-		
-		logger.info("Restart button clicked");
 		
 		gameplayManager.restart();
 	}

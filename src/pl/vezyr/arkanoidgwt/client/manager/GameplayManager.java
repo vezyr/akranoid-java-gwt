@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -60,8 +59,6 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	private DifficultyLevel difficulty;
 	
 	private BlurHandler focusHandler;
-	
-	private static final Logger logger = Logger.getLogger(GameplayManager.class.getName());
 	
 	/**
 	 * Contructor of the GameplayManager with reference to the CanvasManager as parameter.
@@ -231,11 +228,11 @@ public class GameplayManager implements SceneManager, CollisionChecker, MouseInp
 	private void onStateChangeToInProgress() {
 		float xAngle = 0;
 		if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_LEFT)) {
-			xAngle = (float)Math.sin(Math.toRadians(-45));
+			xAngle = -45.0f;
 		} else if (GameManager.getInputManager().isKeyPressed(KeyCodes.KEY_RIGHT)) {
-			xAngle = (float)Math.sin(Math.toRadians(45));
+			xAngle = 45.0f;
 		}
-		ball.getDirection().set(xAngle, (float)Math.sin(Math.toRadians(-45)));
+		ball.getDirection().set((float)Math.sin(Math.toRadians(xAngle)), (float)(Math.abs(Math.cos(Math.toRadians(xAngle)) * -1.0f)));
 		ObjectsRegister.unregister(this);
 	}
 	

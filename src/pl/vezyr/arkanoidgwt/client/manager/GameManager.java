@@ -1,7 +1,5 @@
 package pl.vezyr.arkanoidgwt.client.manager;
 
-import java.util.logging.Logger;
-
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.dom.client.NativeEvent;
@@ -47,8 +45,6 @@ public class GameManager {
 	private EventCallable<NewGameButtonClickEvent> newGameButtonClickAction;
 	private EventCallable<QuitGameButtonClickEvent> quitGameButtonClickAction;
 	
-	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
-	
 	public GameManager() {
 		configManager = new SimpleInMemeoryConfigManager();
 		configManager.load();
@@ -85,8 +81,6 @@ public class GameManager {
 			}
 		};
 		QuitGameButtonClickEvent.addListener(QuitGameButtonClickEvent.class, quitGameButtonClickAction);
-		
-		logger.info("Game Manager constructed.");
 	}
 	
 	/**
